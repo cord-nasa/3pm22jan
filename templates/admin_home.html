@@ -1,0 +1,121 @@
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <a href="/viewuserpage">Verify User</a><br>
+    <a href="/viewbookingpage">View Trips</a><br>
+    <a href="/viewbookingpage">View Parcels</a><br>
+    <a href="/viewcomplaintpage">View Complaints and Send Reply</a><br>
+    <a href="/viewfeedbackpage">View Feedback</a><br>
+</body>
+</html> {% endcomment %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENROUTE | Admin Dashboard</title>
+</head>
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    /* Modern Gradient Background reflecting movement and ecology */
+    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.Dashboard-box {
+    width: 350px;   
+    background: rgba(255, 255, 255, 0.95);
+    padding: 40px;
+    border-radius: 20px;
+    /* Layered shadow for the "floating" modern look defined in documentation */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05), 0 20px 48px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-align: center;
+}
+
+h2 {
+    margin-top: 0;
+    margin-bottom: 30px;
+    color: #2d3436;
+    font-size: 22px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.admin-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.nav-item {
+    display: block;
+    text-decoration: none;
+    width: 100%;
+    padding: 14px;
+    /* Emerald to Teal Gradient consistent with system branding */
+    background: linear-gradient(to right, #00b894, #00cec9);
+    color: white; 
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 4px 12px rgba(0, 184, 148, 0.2);
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.nav-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 184, 148, 0.3);
+    filter: brightness(1.05);
+}
+
+.nav-item:active {
+    transform: translateY(0);
+}
+
+/* Secondary style for complaint/feedback items */
+.nav-item.secondary {
+    background: white;
+    color: #2d3436;
+    border: 1.5px solid #dfe6e9;
+    box-shadow: none;
+}
+
+.nav-item.secondary:hover {
+    border-color: #00b894;
+    color: #00b894;
+    background: rgba(0, 184, 148, 0.05);
+}
+
+</style>
+<body>
+
+    <div class="Dashboard-box">
+        <h2>Admin Management</h2>
+        
+        <div class="admin-nav">
+            <a href="/viewuserpage" class="nav-item">Verify Users</a>
+            
+            <a href="/viewtrippage" class="nav-item">View All Trips</a>
+            <a href="/viewbookingpage" class="nav-item">Manage Parcels</a>
+            
+            <a href="/viewcomplaintpage" class="nav-item secondary">Complaints & Replies</a>
+            <a href="/viewfeedbackpage" class="nav-item secondary">User Feedback</a>
+        </div>
+    </div>
+
+</body>
+</html>

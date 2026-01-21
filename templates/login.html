@@ -1,0 +1,195 @@
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+</head>
+<style>
+body{
+    margin:0;
+    padding:0;
+    font-family:sans-serif;
+    background: blue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.Login-box{
+    width: 200px;   
+    background: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px black;
+
+}
+h2{
+    text-align: center;
+    margin-bottom: 40px;
+}
+.Login-box input{
+    width: 100%;
+    padding: 5px;
+    border: 1px solid black;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    font-size: 14px;
+
+
+}
+.Login-box button{
+    width:90px;
+    padding:6px;
+    margin-left: 50px;
+    background-color: orange;
+    border-radius: 7px;
+
+}
+.Login-box button:hover {
+    background-color: red;
+
+}
+.Login-box label{
+    font-size: 14px;
+    font-weight: bold;
+}
+
+</style>
+<body>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <table>
+            <div class="Login-box">
+
+    <h2>Login</h2>
+          
+                <label>Username:</label><br>
+                <input type="text" name="username" placeholder= "Enter your username"><br>
+           
+                <label>Password:</label><br>
+                <input type="text" name="password"placeholder="Enter your password"><br>
+                <button>Login</button>
+          
+
+            </div>
+        </table>
+    </form>
+</body>
+</html> {% endcomment %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENROUTE | Login</title>
+</head>
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    /* Modern Gradient Background: Represents movement and ecology */
+    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.Login-box {
+    width: 280px;   
+    background: rgba(255, 255, 255, 0.95);
+    padding: 40px;
+    border-radius: 20px;
+    /* Layered shadow for a "floating" modern look */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05), 0 20px 48px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    /* Professional Slate for text */
+    color: #2d3436;
+    font-size: 24px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.Login-box label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #636e72;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.Login-box input {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border: 1.5px solid #dfe6e9;
+    border-radius: 10px;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    background: #fdfdfd;
+}
+
+.Login-box input:focus {
+    outline: none;
+    border-color: #00b894; /* ENROUTE Theme Green */
+    box-shadow: 0 0 0 4px rgba(0, 184, 148, 0.1);
+}
+
+.Login-box button {
+    width: 100%; /* Full width for modern mobile-first feel */
+    padding: 12px;
+    margin-left: 0;
+    /* Gradient button: Emerald to Teal */
+    background: linear-gradient(to right, #00b894, #00cec9);
+    color: white; 
+    border: none; 
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.Login-box button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4);
+}
+
+.Login-box button:active {
+    transform: translateY(0);
+}
+
+</style>
+<body>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="Login-box">
+            <h2>ENROUTE</h2>
+            
+            <label>Username</label>
+            <input type="text" name="username" placeholder="Enter your username">
+            
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Enter your password">
+            
+            <button type="submit">Login</button>
+        </div>
+
+    </form>
+</body>
+</html>

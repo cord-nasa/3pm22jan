@@ -1,0 +1,192 @@
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Form</title>
+</head>
+<body>
+    <h2>User Form</h2>
+    <table border="1">
+
+<tr>
+    <th>name</th>
+    <th>Phone-no</th>
+    <th>email</th>
+    <th>place</th>
+    <th>Action</th>
+</tr>
+{% for i in val %}
+<tr>
+    <td>{{ i.Name }}</td>
+    <td>{{ i.PhoneNo }}</td>
+    <td>{{ i.Email }}</td>
+    <td>{{ i.Place }}</td>
+    <td>
+        <a href="/ApproveUser/{{i.LOGIN.id}}">Approve</a><br>
+        <a href="/RejectUser/{{i.LOGIN.id}}">Reject</a>
+        
+   </td>
+</tr>
+{% endfor %}
+</table>
+</body>
+</html> {% endcomment %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENROUTE | User Verification</title>
+</head>
+<style>
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    /* Modern Gradient Background reflecting movement and ecology */
+    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+.Container {
+    width: 95%;
+    max-width: 1000px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 20px;
+    /* Layered shadow for a "floating" look */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    margin-top: 40px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #2d3436;
+    font-size: 24px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.table-wrapper {
+    overflow-x: auto; /* Ensures mobile responsiveness for the Flutter web module [cite: 3] */
+    border-radius: 12px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+th {
+    background: #f8f9fa;
+    color: #636e72;
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 18px 15px;
+    text-align: left;
+    border-bottom: 2px solid #dfe6e9;
+}
+
+td {
+    padding: 15px;
+    font-size: 14px;
+    color: #2d3436;
+    border-bottom: 1px solid #f1f2f6;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover {
+    background-color: rgba(0, 184, 148, 0.03); /* Branding tint */
+}
+
+/* Action Button Styles */
+.btn-group {
+    display: flex;
+    gap: 8px;
+}
+
+.btn {
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.btn-approve {
+    background: #00b894; /* ENROUTE Signature Green */
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 184, 148, 0.2);
+}
+
+.btn-approve:hover {
+    background: #00a887;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 184, 148, 0.3);
+}
+
+.btn-reject {
+    background: #ffffff;
+    color: #ff7675;
+    border: 1.5px solid #ff7675;
+}
+
+.btn-reject:hover {
+    background: #ff7675;
+    color: white;
+    transform: translateY(-2px);
+}
+
+</style>
+<body>
+
+    <div class="Container">
+        <h2>User Verification Management</h2>
+        
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Full Name</th>
+                        <th>Phone Number</th>
+                        <th>Email Address</th>
+                        <th>Place/Region</th>
+                        <th>Verification Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in val %}
+                    <tr>
+                        <td style="font-weight: 600;">{{ i.Name }}</td>
+                        <td>{{ i.PhoneNo }}</td>
+                        <td style="color: #0984e3;">{{ i.Email }}</td>
+                        <td>{{ i.Place }}</td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="/ApproveUser/{{i.LOGIN.id}}" class="btn btn-approve">Approve</a>
+                                <a href="/RejectUser/{{i.LOGIN.id}}" class="btn btn-reject">Reject</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>
