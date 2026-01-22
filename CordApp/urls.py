@@ -34,7 +34,7 @@ urlpatterns = [
     path('ViewFeedbackAPI',ViewFeedbackAPI.as_view(),name='ViewFeedbackAPI'),
     path('NearestTravelersAPI',NearestTravelersAPI.as_view(),name='NearestTravelersAPI'),
     path('FeedbackReplyAPI',FeedbackReplyAPI.as_view(),name='FeedbackReplyAPI'),
-    path('ViewEarningsAPI',ViewEarningsAPI.as_view(),name='ViewEarningsAPI'),
+    path('ViewEarningsAPI/<int:lid>',ViewEarningsAPI.as_view(),name='ViewEarningsAPI'),
     # path('ParcelBookingAPI',ParcelBookingAPI.as_view(),name='ParcelBookingAPI'),
     path('SendFeedbackAPI/<int:id>',SendFeedbackAPI.as_view(),name='SendFeedbackAPI'),
 

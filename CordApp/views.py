@@ -355,12 +355,97 @@ class FeedbackReplyAPI(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 # API to view earnings
+# from django.db.models import Sum
+
+# class ViewEarningsAPI(APIView):
+#     def get(self, request, lid):
+#         try:
+#             # 1. Get the Traveler Object
+#             traveler = UserTable.objects.get(LOGIN_id=lid)
+            
+#             # 2. Calculate Total Kms from their routes
+#             total_kms = TravelRouteTable.objects.filter(TRAVELERID=traveler).aggregate(Sum('Kms'))['Kms__sum'] or 0.0
+            
+#             # 3. Calculate Total Earnings from Payments
+#             # We look for payments where the booking belongs to one of this traveler's routes
+#             total_earned = PaymentTable.objects.filter(
+#                 BOOKINGID__TRAVELERID__TRAVELERID=traveler
+#             ).aggregate(Sum('Amount'))['Amount__sum'] or 0.0
+            
+#             # 4. Logic: Carbon Credits (Example: 5 CC per KM)
+#             carbon_credits = int(total_kms * 5)
+            
+#             # 5. Fetch recent activity (Last 5 successful payments)
+#             recent_payments = PaymentTable.objects.filter(
+#                 BOOKINGID__TRAVELERID__TRAVELERID=traveler
+#             ).order_by('-TransactionDate')[:5]
+            
+#             history_data = []
+#             for p in recent_payments:
+#                 history_data.append({
+#                     "id": f"TR{p.id}",
+#                     "type": p.BOOKINGID.TRAVELERID.RideType,
+#                     "amount": p.Amount,
+#                     "date": p.TransactionDate.strftime("%d-%m-%Y"),
+#                     "ccEarned": int(p.BOOKINGID.TRAVELERID.Kms * 5)
+#                 })
+
+#             return Response({
+#                 "total_kms": round(total_kms, 2),
+#                 "total_earned": round(total_earned, 2),
+#                 "carbon_credits": carbon_credits,
+#                 "recent_activity": history_data
+#             }, status=status.HTTP_200_OK)
+
+#         except UserTable.DoesNotExist:
+#             return Response({"error": "Traveler not found"}, status=status.HTTP_404_NOT_FOUND)
+from django.db.models import Sum
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import UserTable, TravelRouteTable, PaymentTable
+
 class ViewEarningsAPI(APIView):
-    def get(self, request):
-        h=PaymentTable.objects.all()
-        serializer=PaymentSerializer(h,many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
+    def get(self, request, lid):
+        try:
+            # Get the Traveler based on login ID
+            traveler = UserTable.objects.get(LOGIN_id=lid)
+            
+            # Calculate Total Kms (from all routes published by this traveler)
+            total_kms = TravelRouteTable.objects.filter(TRAVELERID=traveler).aggregate(Sum('Kms'))['Kms__sum'] or 0.0
+            
+            # Calculate Total Gross Earnings (from all payments received for their bookings)
+            total_earned = PaymentTable.objects.filter(
+                BOOKINGID__TRAVELERID__TRAVELERID=traveler
+            ).aggregate(Sum('Amount'))['Amount__sum'] or 0.0
+            
+            # Logic: Carbon Credits (10 CC per KM)
+            carbon_credits = int(total_kms * 10)
+            
+            # Get Recent Activity (History)
+            recent_payments = PaymentTable.objects.filter(
+                BOOKINGID__TRAVELERID__TRAVELERID=traveler
+            ).order_by('-TransactionDate')[:10]
+            
+            history_data = []
+            for p in recent_payments:
+                history_data.append({
+                    "id": f"TRN-{p.id}",
+                    "type": p.BOOKINGID.TRAVELERID.RideType,
+                    "amount": p.Amount,
+                    "date": p.TransactionDate.strftime("%d-%m-%Y"),
+                    "ccEarned": int((p.BOOKINGID.TRAVELERID.Kms or 0) * 10)
+                })
+
+            return Response({
+                "total_kms": round(total_kms, 2),
+                "total_earned": round(total_earned, 2),
+                "carbon_credits": carbon_credits,
+                "recent_activity": history_data
+            }, status=status.HTTP_200_OK)
+
+        except UserTable.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 # API to view feedbacks
 class ViewFeedbackAPI(APIView):
     def get(self, request):
