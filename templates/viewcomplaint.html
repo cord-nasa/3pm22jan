@@ -3,37 +3,242 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Complaint </title>
+    <title>ENROUTE | Resolve Complaints</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f5b8; 
+            --accent: #00d2ff;
+            --glass-base: rgba(255, 255, 255, 0.07); 
+            --glass-stroke: rgba(255, 255, 255, 0.35);
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --danger-glow: rgba(255, 118, 117, 0.3);
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #080a0a url('https://images.unsplash.com/photo-1476820865390-c52aeebb9891?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat fixed;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.8) 100%);
+            z-index: -1;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: var(--glass-base);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            padding: 45px;
+            box-shadow: 0 50px 120px rgba(0, 0, 0, 0.4);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: 4px;
+            background: linear-gradient(to bottom, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 11px;
+            color: var(--primary);
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 28px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: white;
+            min-width: 1000px;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            padding: 22px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-stroke);
+        }
+
+        td {
+            padding: 20px;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: top;
+        }
+
+        .user-cell {
+            min-width: 150px;
+        }
+
+        .user-cell strong {
+            display: block;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .date-tag {
+            font-size: 11px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .desc-text {
+            line-height: 1.6;
+            color: #dfe6e9;
+            max-width: 300px;
+        }
+
+        .status-box {
+            padding: 12px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        /* Reply Action Styling */
+        textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-stroke);
+            border-radius: 12px;
+            padding: 12px;
+            color: white;
+            font-family: inherit;
+            font-size: 13px;
+            resize: vertical;
+            min-height: 80px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(0, 245, 184, 0.05);
+        }
+
+        .btn-submit {
+            width: 100%;
+            margin-top: 10px;
+            padding: 12px;
+            background: #ffffff;
+            color: #004d3d;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            background: var(--primary);
+            box-shadow: 0 10px 20px rgba(0, 245, 184, 0.3);
+        }
+    </style>
 </head>
 <body>
-    <h2>View Complaint</h2>
-    <table border="1">
 
-<tr>
-    <th>Name</th>
-    <th>Subject</th>
-    <th>Description</th>
-    <th>Complaint date </th>
-    <th>Reply</th>
-    <th>action</th>
-</tr>
-{% for i in val %}
-<tr>
-    <td>{{i.USERID.Name}}</td>
-    <td>{{i.Subject }}</td>
-    <td>{{i.Description }}</td>
-    <td>{{i.ComplaintDate }}</td>
-    <td>{{i.Reply }}</td>
-    <form method="post" action="SendReply/{{ i.id }}">
-        {% csrf_token %}
-    <td>
-        <textarea name="reply" id=""></textarea>
-        <input type="submit">
-    </td>
-    </form>
-</tr>
-{% endfor %}
-</table>
+    <div class="container">
+        <div class="header-section">
+            <h1>Resolution Center</h1>
+            <span class="subtitle">Official Admin Response Portal</span>
+        </div>
+        
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Reporter & Date</th>
+                        <th>Subject</th>
+                        <th>Description</th>
+                        <th>Existing Resolution</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in val %}
+                    <tr>
+                        <td class="user-cell">
+                            <strong>{{ i.USERID.Name }}</strong>
+                            <span class="date-tag">{{ i.ComplaintDate }}</span>
+                        </td>
+                        <td style="font-weight: 600; color: var(--primary);">{{ i.Subject }}</td>
+                        <td>
+                            <div class="desc-text">{{ i.Description }}</div>
+                        </td>
+                        <td>
+                            <div class="status-box">
+                                {% if i.Reply %}
+                                    <span style="color: var(--primary);">✓ {{ i.Reply }}</span>
+                                {% else %}
+                                    <span style="color: #ff7675;">⚠ Pending Review</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td style="min-width: 220px;">
+                            <form method="post" action="SendReply/{{ i.id }}">
+                                {% csrf_token %}
+                                <textarea name="reply" placeholder="Identify resolution steps..."></textarea>
+                                <button type="submit" class="btn-submit">Dispatch Reply</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </body>
 </html> {% endcomment %}
 
@@ -42,174 +247,389 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ENROUTE | Resolve Complaints</title>
+    <title>ENROUTE | Resolution Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* Brand Colors */
+            --primary: #00f5b8;        /* Neon Mint */
+            --accent: #00d2ff;         /* Electric Blue */
+            --danger: #ff4757;         /* Soft Red */
+            --warning: #ffa502;        /* Amber */
+            
+            /* Backgrounds */
+            --bg-dark: #05070a;
+            --glass-panel: rgba(20, 25, 30, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --input-bg: rgba(0, 0, 0, 0.4);
+            
+            /* Text */
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-dark) url('https://images.unsplash.com/photo-1476820865390-c52aeebb9891?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        body::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to bottom, rgba(5, 7, 10, 0.85), rgba(5, 7, 10, 0.98));
+            z-index: -1;
+        }
+
+        /* --- NAVIGATION --- */
+        .back-nav {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 100;
+        }
+
+        .back-nav:hover {
+            background: var(--primary);
+            color: #05070a;
+            border-color: var(--primary);
+            transform: translateX(-5px);
+            box-shadow: 0 0 20px rgba(0, 245, 184, 0.4);
+        }
+
+        /* --- MAIN CONTAINER --- */
+        .container {
+            width: 95%;
+            max-width: 1300px;
+            margin-top: 100px;
+            margin-bottom: 50px;
+            animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- HEADER & STATS --- */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .header-title h1 {
+            font-size: 36px;
+            margin: 0;
+            font-weight: 800;
+            background: linear-gradient(120deg, #ffffff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .header-title span {
+            font-size: 12px;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .stat-pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .stat-pill b { color: #fff; font-size: 14px; }
+
+        /* --- TABLE --- */
+        .glass-table-container {
+            background: var(--glass-panel);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .table-scroll { overflow-x: auto; }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        th {
+            text-align: left;
+            padding: 24px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            font-weight: 700;
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.02);
+        }
+
+        td {
+            padding: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            vertical-align: top;
+            font-size: 14px;
+        }
+
+        tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+        /* --- COLUMN STYLES --- */
+        
+        /* User Info */
+        .user-meta { display: flex; align-items: center; gap: 12px; }
+        .avatar-initial {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: var(--primary);
+        }
+        .user-name { font-weight: 700; display: block; color: #fff; }
+        .complaint-date { font-size: 11px; color: var(--text-muted); font-family: monospace; margin-top: 3px; }
+
+        /* Description */
+        .desc-box {
+            max-width: 350px;
+            line-height: 1.6;
+            color: #e2e8f0;
+            font-size: 13px;
+        }
+        .desc-id {
+            font-size: 10px; color: var(--accent); 
+            font-weight: 700; margin-bottom: 6px; display: block;
+            text-transform: uppercase;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px; font-weight: 700; text-transform: uppercase;
+        }
+        .st-pending { background: rgba(255, 71, 87, 0.1); color: var(--danger); border: 1px solid rgba(255, 71, 87, 0.2); }
+        .st-solved { background: rgba(0, 245, 184, 0.1); color: var(--primary); border: 1px solid rgba(0, 245, 184, 0.2); }
+
+        /* Resolution Box */
+        .resolution-read {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-style: italic;
+            border-left: 2px solid var(--primary);
+            padding-left: 10px;
+            margin-top: 5px;
+        }
+
+        /* Action Form */
+        .reply-form { position: relative; }
+        
+        textarea {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 12px;
+            color: white;
+            font-family: inherit;
+            font-size: 13px;
+            min-height: 50px;
+            resize: vertical;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 0 15px rgba(0, 245, 184, 0.1);
+            min-height: 80px;
+        }
+
+        .btn-send {
+            margin-top: 8px;
+            width: 100%;
+            padding: 10px;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
+
+        .btn-send:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 245, 184, 0.3);
+        }
+
+    </style>
 </head>
-<style>
-body {
-    margin: 0;
-    padding: 30px;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    /* Eco-friendly movement gradient */
-    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
-    color: #2d3436;
-    min-height: 100vh;
-}
-
-.Dashboard-Container {
-    max-width: 1100px;
-    margin: 0 auto;
-    background: rgba(255, 255, 255, 0.98);
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-h2 {
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 24px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: #1a4731; /* Deep Forest Green for academic rigor */
-}
-
-.table-responsive {
-    overflow-x: auto;
-    border-radius: 15px;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    font-size: 14px;
-}
-
-th {
-    background: #f8f9fa;
-    color: #636e72;
-    text-transform: uppercase;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 15px;
-    text-align: left;
-    border-bottom: 2px solid #00b894; /* Signature ENROUTE Emerald */
-}
-
-td {
-    padding: 15px;
-    border-bottom: 1px solid #f1f2f6;
-    vertical-align: top;
-}
-
-.user-name {
-    font-weight: 700;
-    color: #2d3436;
-}
-
-.date-text {
-    font-size: 12px;
-    color: #b2bec3;
-}
-
-.desc-text {
-    max-width: 250px;
-    line-height: 1.5;
-    color: #4b5563;
-}
-
-/* Reply Section Styling */
-textarea {
-    width: 100%;
-    min-height: 60px;
-    padding: 10px;
-    border: 1.5px solid #dfe6e9;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 13px;
-    resize: vertical;
-    box-sizing: border-box;
-    transition: border-color 0.3s;
-}
-
-textarea:focus {
-    outline: none;
-    border-color: #00b894;
-}
-
-input[type="submit"] {
-    margin-top: 8px;
-    width: 100%;
-    padding: 8px;
-    background: linear-gradient(to right, #00b894, #00cec9);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-input[type="submit"]:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 184, 148, 0.3);
-}
-
-.status-reply {
-    font-style: italic;
-    color: #00b894;
-    font-size: 13px;
-}
-
-</style>
 <body>
 
-    <div class="Dashboard-Container">
-        <h2>Complaint Resolution Center</h2>
+    <a href="/adminhome" class="back-nav">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Dashboard</span>
+    </a>
+
+    <div class="container">
         
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>User & Date</th>
-                        <th>Issue Subject</th>
-                        <th>Description</th>
-                        <th>Existing Reply</th>
-                        <th>Action / Send Response</th>
-                    </tr>
-                </thead>
-                <tbody>
+        <div class="page-header">
+            <div class="header-title">
+                <h1>Resolution Center</h1>
+                <span>Support Ticket Management</span>
+            </div>
+            
+            <div class="stats-row">
+                <div class="stat-pill">
+                    <i class="fa-solid fa-list"></i>
+                    Total: <b>{{ val|length }}</b>
+                </div>
+                
+                {% with pending=0 resolved=0 %}
                     {% for i in val %}
-                    <tr>
-                        <td>
-                            <div class="user-name">{{ i.USERID.Name }}</div>
-                            <div class="date-text">{{ i.ComplaintDate }}</div>
-                        </td>
-                        <td style="font-weight: 600;">{{ i.Subject }}</td>
-                        <td>
-                            <div class="desc-text">{{ i.Description }}</div>
-                        </td>
-                        <td>
-                            <div class="status-reply">
-                                {% if i.Reply %}
-                                    {{ i.Reply }}
-                                {% else %}
-                                    <span style="color: #fab1a0;">Awaiting Resolution</span>
-                                {% endif %}
-                            </div>
-                        </td>
-                        <td>
-                            <form method="post" action="SendReply/{{ i.id }}">
-                                {% csrf_token %}
-                                <textarea name="reply" placeholder="Type your official reply..."></textarea>
-                                <input type="submit" value="Send Reply">
-                            </form>
-                        </td>
-                    </tr>
+                        {% if i.Reply %}
+                            {% with resolved=resolved|add:1 %}{% endwith %} {% endif %}
                     {% endfor %}
-                </tbody>
-            </table>
+                    
+                    <div class="stat-pill" style="border-color: rgba(255, 71, 87, 0.3);">
+                        <i class="fa-solid fa-circle-exclamation" style="color: var(--danger);"></i>
+                        Action Required
+                    </div>
+                {% endwith %}
+            </div>
+        </div>
+
+        <div class="glass-table-container">
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Reporter info</th>
+                            <th>Complaint Detail</th>
+                            <th>Current Status</th>
+                            <th>Admin Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in val %}
+                        <tr>
+                            <td style="width: 20%;">
+                                <div class="user-meta">
+                                    <div class="avatar-initial">
+                                        {{ i.USERID.Name|slice:":1" }}
+                                    </div>
+                                    <div>
+                                        <span class="user-name">{{ i.USERID.Name }}</span>
+                                        <div class="complaint-date">
+                                            <i class="fa-regular fa-calendar"></i> {{ i.ComplaintDate }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td style="width: 35%;">
+                                <div class="desc-box">
+                                    <span class="desc-id">#TICKET-{{ i.id }}</span>
+                                    {{ i.Description|linebreaksbr }}
+                                </div>
+                                {% if i.BOOKINGID %}
+                                <div style="margin-top: 8px; font-size: 11px; color: var(--accent);">
+                                    <i class="fa-solid fa-link"></i> Linked to Booking #{{ i.BOOKINGID.id }}
+                                </div>
+                                {% endif %}
+                            </td>
+
+                            <td style="width: 15%;">
+                                {% if i.Reply %}
+                                    <div class="status-badge st-solved">
+                                        <i class="fa-solid fa-check"></i> Resolved
+                                    </div>
+                                    <div class="resolution-read">
+                                        "{{ i.Reply|truncatechars:50 }}"
+                                    </div>
+                                {% else %}
+                                    <div class="status-badge st-pending">
+                                        <i class="fa-solid fa-clock"></i> Pending
+                                    </div>
+                                {% endif %}
+                            </td>
+
+                            <td style="width: 30%;">
+                                <form method="post" action="SendReply/{{ i.id }}" class="reply-form">
+                                    {% csrf_token %}
+                                    <textarea name="reply" placeholder="Type resolution message here..." required>{% if i.Reply %}{{ i.Reply }}{% endif %}</textarea>
+                                    
+                                    <button type="submit" class="btn-send">
+                                        {% if i.Reply %}
+                                            <i class="fa-solid fa-pen-to-square"></i> Update Resolution
+                                        {% else %}
+                                            <i class="fa-solid fa-paper-plane"></i> Send Reply
+                                        {% endif %}
+                                    </button>
+                                </form>
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

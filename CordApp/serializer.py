@@ -17,10 +17,40 @@ class AddBookingSerializer(serializers.ModelSerializer):
         fields = ['PickupLocation', 'DropLocation', 'TRAVELERID', 'ParcelImage']
         
 class UserSerializer(serializers.ModelSerializer):
+    # These explicitly allow the serializer to handle image files
+    ProfilePhoto = serializers.ImageField(required=False, allow_null=True)
+    IdProof = serializers.ImageField(required=False, allow_null=True)
     class Meta:
         model = UserTable
-        fields = ['id', 'Name', 'PhoneNo', 'Email', 'Place','ProfilePhoto']
+        fields = ['id', 'Name', 'PhoneNo', 'Email', 'Place','ProfilePhoto','IdProof','UpiId']
 
+# class BookingSerializer(serializers.ModelSerializer):
+#     """
+#     Used by VerifyRideBookingAPI. 
+#     Matches the fields expected by 'VerifyPickupDropPage' in Flutter.
+#     """
+#     # Use dot walking to get the Requester's info
+#     Name = serializers.CharField(source='USERID.Name', default="Requester")
+#     PhoneNo = serializers.CharField(source='USERID.PhoneNo', default="")
+    
+#     # Get Route details from the traveler's route
+#     StartingTime = serializers.TimeField(source='TRAVELERID.StartingTime', read_only=True)
+#     Amount = serializers.FloatField(source='TRAVELERID.Amount', default=0.0)
+#     spaceavailability = serializers.CharField(source='TRAVELERID.SpaceAvailability', default="N/A")
+#     RideType = serializers.CharField(source='TRAVELERID.RideType', default="Ride")
+#     ParcelImage = serializers.ImageField(required=False, allow_null=True)
+#     # --- ADD THE NEW FIELDS HERE ---
+#     # --- ADD THE NEW FIELDS HERE ---
+#     PaymentProof = serializers.ImageField(required=False, allow_null=True)
+#     PaymentStatus = serializers.CharField()  # Add this too
+#     UTR = serializers.CharField(source='UTR', allow_null=True)  # Add this if you have UTR field
+#     class Meta:
+#         model = BookingTable
+#         fields = [
+#             'id', 'PickupLocation', 'DropLocation', 'RideType', 
+#             'TRAVELERID', 'PhoneNo', 'Name', 'StartingTime', 
+#             'Amount', 'spaceavailability', 'BookingStatus', 'ParcelImage','PaymentProof', 'PaymentStatus', 'UTR'  # Added the missing fiel
+#         ]
 class BookingSerializer(serializers.ModelSerializer):
     """
     Used by VerifyRideBookingAPI. 
@@ -35,14 +65,24 @@ class BookingSerializer(serializers.ModelSerializer):
     Amount = serializers.FloatField(source='TRAVELERID.Amount', default=0.0)
     spaceavailability = serializers.CharField(source='TRAVELERID.SpaceAvailability', default="N/A")
     RideType = serializers.CharField(source='TRAVELERID.RideType', default="Ride")
+    
+    # Images
     ParcelImage = serializers.ImageField(required=False, allow_null=True)
+    PaymentProof = serializers.ImageField(required=False, allow_null=True)
+
+    # FIXED: Removed source='PaymentStatus' because it matches the variable name
+    PaymentStatus = serializers.CharField(default="Pending") 
+    
+    # FIXED: Removed source='UTR' because it matches the variable name
+    UTR = serializers.CharField(required=False, allow_null=True) 
 
     class Meta:
         model = BookingTable
         fields = [
             'id', 'PickupLocation', 'DropLocation', 'RideType', 
             'TRAVELERID', 'PhoneNo', 'Name', 'StartingTime', 
-            'Amount', 'spaceavailability', 'BookingStatus', 'ParcelImage'
+            'Amount', 'spaceavailability', 'BookingStatus', 
+            'ParcelImage', 'PaymentProof', 'PaymentStatus', 'UTR'
         ]
 
 class BookingSerializer1(serializers.ModelSerializer):
@@ -74,7 +114,7 @@ class BookingSerializer1(serializers.ModelSerializer):
             'id', 'PickupLocation', 'DropLocation', 'BookingStatus', 'Amount', 
             'BookingDate', 'OtpCode', 'RideAvailability', 'SpaceAvailability', 
             'RideType', 'StartingTime', 'EndingTime', 'StartLocation', 'EndLocation', 
-            'Name', 'PhoneNo', 'Kms', 'VehicleType', 'Startdate', 'Enddate', 'BagSize'
+            'Name', 'PhoneNo', 'Kms', 'VehicleType', 'Startdate', 'Enddate', 'BagSize','PaymentStatus' # <--- ADD THIS HERE TOO
         ]
 
 
@@ -135,6 +175,7 @@ class TravelRouteSerializer(serializers.ModelSerializer):
         ).count() 
 
 class AddTravelRouteSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = TravelRouteTable
         # FIX: Added the missing location and availability fields here

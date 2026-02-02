@@ -1,0 +1,337 @@
+{% load math_filters %} <!DOCTYPE html>
+<html lang="en"><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENROUTE | Payout Console</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* Financial Palette */
+            --bg-dark: #05070a;
+            --surface: rgba(22, 27, 34, 0.75);
+            --primary: #00f5b8;       /* Mint for Success/Money */
+            --accent: #00d2ff;        /* Blue for Info */
+            --danger: #ff4757;        /* Red for Deductions */
+            --border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-dark) url('https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=2070') center/cover no-repeat fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* Dark Overlay */
+        body::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to bottom, rgba(5, 7, 10, 0.9), rgba(5, 7, 10, 0.98));
+            z-index: -1;
+        }
+
+        /* --- NAVIGATION --- */
+        .back-nav {
+            position: absolute; top: 30px; left: 30px;
+            text-decoration: none; color: var(--text-muted);
+            font-size: 13px; font-weight: 600;
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            text-transform: uppercase; letter-spacing: 1px;
+            z-index: 100;
+        }
+
+        .back-nav:hover {
+            background: var(--primary); color: #05070a; border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 245, 184, 0.4);
+        }
+
+        /* --- CONTAINER --- */
+        .container {
+            width: 95%; max-width: 1400px;
+            margin-top: 100px; margin-bottom: 50px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- HEADER & STATS --- */
+        .header-grid {
+            display: grid; grid-template-columns: 1fr auto;
+            gap: 20px; align-items: end; margin-bottom: 30px;
+            padding-bottom: 20px; border-bottom: 1px solid var(--border);
+        }
+
+        .header-title h1 {
+            font-size: 32px; font-weight: 800; margin: 0;
+            background: linear-gradient(120deg, #fff, var(--primary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .header-title span { font-size: 12px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; font-weight: 600; }
+
+        .stats-deck { display: flex; gap: 15px; }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+            padding: 15px 25px; border-radius: 16px;
+            display: flex; flex-direction: column; min-width: 180px;
+        }
+        .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; }
+        .stat-val { font-size: 20px; font-weight: 700; color: #fff; font-family: 'Monaco', monospace; }
+        .stat-card.highlight { border-color: var(--primary); background: rgba(0, 245, 184, 0.05); }
+        .stat-card.highlight .stat-val { color: var(--primary); }
+
+        /* --- TABLE --- */
+        .glass-panel {
+            background: var(--surface); backdrop-filter: blur(20px);
+            border: 1px solid var(--border); border-radius: 24px;
+            overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+        }
+
+        .table-scroll { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 1100px; }
+
+        th {
+            text-align: left; padding: 22px; font-size: 11px;
+            text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted);
+            border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02);
+        }
+
+        td { padding: 22px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+
+        /* --- CELL COMPONENTS --- */
+        .traveler-info { display: flex; align-items: center; gap: 12px; }
+        .avatar {
+            width: 40px; height: 40px; border-radius: 10px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: var(--accent); border: 1px solid var(--border);
+        }
+        .t-name { font-weight: 700; display: block; color: #fff; }
+        .t-id { font-size: 11px; color: var(--text-muted); font-family: monospace; }
+
+        /* Financials */
+        .money-block { font-family: 'Monaco', monospace; }
+        .gross { color: #fff; font-size: 14px; font-weight: 600; }
+        .deduction { color: var(--danger); font-size: 12px; }
+        
+        .net-pill {
+            background: rgba(0, 245, 184, 0.1); color: var(--primary);
+            padding: 8px 16px; border-radius: 8px; font-weight: 800;
+            font-size: 15px; border: 1px solid rgba(0, 245, 184, 0.3);
+            display: inline-block; font-family: 'Monaco', monospace;
+        }
+
+        /* Action Button */
+        .btn-pay {
+            background: #fff; color: #000;
+            padding: 10px 20px; border-radius: 10px;
+            font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            border: none; cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; gap: 8px; width: fit-content;
+        }
+        .btn-pay:hover {
+            background: var(--primary); transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 245, 184, 0.3);
+        }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 1000;
+            display: none; justify-content: center; align-items: center;
+            backdrop-filter: blur(8px); opacity: 0; transition: 0.3s;
+        }
+        .modal-overlay.active { display: flex; opacity: 1; }
+
+        .modal-card {
+            background: #151920; border: 1px solid var(--border);
+            width: 400px; padding: 30px; border-radius: 24px;
+            box-shadow: 0 0 50px rgba(0, 245, 184, 0.1);
+            transform: scale(0.9); transition: 0.3s;
+        }
+        .modal-overlay.active .modal-card { transform: scale(1); }
+
+        .modal-title { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 20px; }
+        
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; }
+        .input-field {
+            width: 100%; background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border); padding: 12px;
+            color: #fff; border-radius: 8px; font-family: inherit;
+            box-sizing: border-box;
+        }
+        .input-field:focus { outline: none; border-color: var(--primary); }
+
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+        .btn-cancel {
+            background: transparent; color: var(--text-muted);
+            border: 1px solid var(--border); padding: 10px 20px; border-radius: 8px;
+            cursor: pointer;
+        }
+        .btn-confirm {
+            background: var(--primary); color: #000;
+            border: none; padding: 10px 20px; border-radius: 8px;
+            font-weight: 700; cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+    <a href="/adminhome" class="back-nav">
+        <i class="fa-solid fa-arrow-left"></i> Dashboard
+    </a>
+
+    <div class="container">
+        
+        <div class="header-grid">
+            <div class="header-title">
+                <h1>Traveler Settlements</h1>
+                <span>Commission Management & Payouts</span>
+            </div>
+            
+            {% comment %} <div class="stats-deck">
+                <div class="stat-card">
+                    <div class="stat-label">Pending Payouts</div>
+                    <div class="stat-val">₹45,200</div> 
+                </div>
+                <div class="stat-card highlight">
+                    <div class="stat-label">Total Revenue (5%)</div>
+                    <div class="stat-val">₹2,350</div>
+                </div>
+            </div> {% endcomment %}
+            <div class="stats-deck">
+                <div class="stat-card">
+                    <div class="stat-label">Pending Payouts</div>
+                    <div class="stat-val">₹{{ pending_payouts|floatformat:2 }}</div> 
+                </div>
+
+                <div class="stat-card highlight">
+                    <div class="stat-label">Total Revenue (5%)</div>
+                    <div class="stat-val">₹{{ platform_revenue|floatformat:2 }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-panel">
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Traveler Details</th>
+                            <th>Total Trips</th>
+                            <th>Gross Earnings</th>
+                            <th>Platform Fee (5%)</th>
+                            <th>Net Payable</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in travelers %}
+                        <tr>
+                            <td>
+                                <div class="traveler-info">
+                                    <div class="avatar">{{ i.Name|slice:":1" }}</div>
+                                    <div>
+                                        <span class="t-name">{{ i.Name }}</span>
+                                        <span class="t-id">ID: #TVL-{{ i.id }}</span>
+                                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">
+                                            <i class="fa-solid fa-phone"></i> {{ i.PhoneNo }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            
+                            <td style="font-weight: 600; color: #fff;">
+                                {{ i.TotalTrips }} Trips
+                            </td>
+
+                            <td>
+                                <div class="money-block gross">₹{{ i.TotalEarned }}</div>
+                            </td>
+
+                            <td>
+                                <div class="money-block deduction">
+                                    - ₹{{ i.TotalEarned|multiply:0.05|floatformat:2 }}
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="net-pill">
+                                    ₹{{ i.NetPayable|floatformat:2 }}
+                                </div>
+                            </td>
+
+                            <td>
+                                <button class="btn-pay" onclick="openPayoutModal('{{ i.id }}', '{{ i.Name }}', '{{ i.TotalEarned|multiply:0.95|floatformat:2 }}')">
+                                    Send <i class="fa-solid fa-paper-plane"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="payoutModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-title">Confirm Payout</div>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
+                You are about to settle the balance for <strong style="color: #fff;" id="modalName">User</strong>.
+            </p>
+
+            <form method="POST" action="/SettlePayment">
+                {% csrf_token %}
+                <input type="hidden" name="traveler_id" id="modalId">
+                
+                <div class="input-group">
+                    <label>Amount to Send</label>
+                    <input type="text" class="input-field" id="modalAmount" readonly 
+                           style="color: var(--primary); font-weight: 700; font-size: 18px;">
+                </div>
+
+                <div class="input-group">
+                    <label>Transaction ID / UTR (Required)</label>
+                    <input type="text" name="utr_number" class="input-field" placeholder="Enter bank reference ID..." required>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn-confirm">Confirm Settlement</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openPayoutModal(id, name, amount) {
+            document.getElementById('modalId').value = id;
+            document.getElementById('modalName').innerText = name;
+            document.getElementById('modalAmount').value = '₹ ' + amount;
+            document.getElementById('payoutModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('payoutModal').classList.remove('active');
+        }
+    </script>
+
+</body>
+</html>

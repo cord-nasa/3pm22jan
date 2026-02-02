@@ -3,6 +3,8 @@ from django.urls import path
 
 from CordApp.views import *
 
+from . import views
+
 
 
 urlpatterns = [
@@ -15,7 +17,9 @@ urlpatterns = [
     path('SendReply/<int:cid>',SendReply.as_view(),name='SendReply'),
     path('viewfeedbackpage',viewfeedbackpage.as_view(),name='viewfeedbackpage'),
     path('viewtrippage',viewtrippage.as_view(),name='viewtrippage'),
+    path('SettlePayment', views.SettlePayment.as_view(), name='SettlePayment'),
     path('adminhome',adminhome.as_view(),name='adminhome'),
+    path('UploadPaymentProofAPI', UploadPaymentProofAPI.as_view(),name='UploadPaymentProofAPI'),
 
 ##################################USER API#######################################
 
@@ -27,7 +31,9 @@ urlpatterns = [
     path('ViewRideTravelRouteAPI',ViewRideTravelRouteAPI.as_view(),name='ViewRideTravelRouteAPI'),
     path('SendComplaintsAPI',SendComplaintsAPI.as_view(),name='SendComplaintsAPI'),
     path('ComplaintReplyAPI/<int:lid>',ComplaintReplyAPI.as_view(),name='ComplaintReplyAPI'),
-
+    # ADD YOUR NEW PAYMENT PATHS HERE
+    path('viewtrippage', views.viewtrippage.as_view(), name='viewtrippage'),
+    path('SettlePayment', views.SettlePayment.as_view(), name='SettlePayment'),
 
 
 
@@ -52,4 +58,5 @@ urlpatterns = [
     path('reject_booking_api',reject_booking_api.as_view(),name='reject_booking_api'),
     path('CreatePaymentIntent',CreatePaymentIntent.as_view(),name='CreatePaymentIntent'),
     path('addtipapi',UpdateGratitudeAPI.as_view(),name='AddTipApi'),
+    path('ApprovePaymentAPI', ApprovePaymentAPI.as_view(), name='ApprovePaymentAPI'), 
 ]

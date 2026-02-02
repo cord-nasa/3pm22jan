@@ -1,193 +1,846 @@
-{% comment %} <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Booking </title>
-</head>
-<body>
-    <h2>View Booking</h2>
-    <table border="1">
+{% comment %} 
 
-<tr>
-    <th>User</th>
-    <th>Ph.no</th>
-    <th>Traveler</th>
-    <th>Ph.no</th>
-    <th>Pickup Location  </th>
-    <th>Dropping Location</th>
-    <th>Parcel Details</th>
-    <th>Category </th>
-    <th>Status </th>
-    <th>Final Amount </th>
-</tr>
-{% for i in val %}
-<tr>
-    <td>{{ i.USERID.Name }}</td>
-    <th>{{ i.USERID.PhoneNo }}</th>
-    <td>{{ i.TRAVELERID.Name }}</td>
-    <td>{{ i.TRAVELERID.PhoneNo }}</td>
-    <td>{{ i.PickupLocation }}</td>
-    <td>{{ i.DropLocation }}</td>
-    <td>{{ i.DeliveryDetails }}</td>
-    <td>{{ i.Category }}</td>
-    <td>{{ i.BookingStatus }}</td>
-    <td>{{ i.Amount }}</td>
-</tr>
-{% endfor %}
-</table>
-</body>
-</html> {% endcomment %}
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ENROUTE | View Bookings</title>
+    <title>ENROUTE | Master Booking Control</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #00f5b8; 
+            --accent: #00d2ff;
+            --warning: #f1c40f;
+            --danger: #ff4757;
+            --dark-bg: #05070a;
+            --glass: rgba(15, 20, 25, 0.7);
+            --glass-strong: rgba(22, 27, 34, 0.95);
+            --stroke: rgba(255, 255, 255, 0.08);
+            --text-main: #f0f6fc;
+            --text-dim: #8b949e;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--dark-bg) url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at top right, rgba(0, 245, 184, 0.05), transparent),
+                        linear-gradient(rgba(5, 7, 10, 0.85), rgba(5, 7, 10, 0.98));
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Header --- */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--stroke);
+        }
+
+        .title-block h1 {
+            font-size: 28px;
+            margin: 0;
+            background: linear-gradient(120deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .title-block span {
+            font-size: 13px;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* --- Table Styling --- */
+        .table-container {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--stroke);
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1200px;
+        }
+
+        th {
+            text-align: left;
+            padding: 20px 24px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-dim);
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid var(--stroke);
+        }
+
+        td {
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            vertical-align: middle;
+            font-size: 14px;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* --- Components --- */
+        .id-badge {
+            font-family: 'Monaco', monospace;
+            font-size: 11px;
+            color: var(--accent);
+            background: rgba(0, 210, 255, 0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: var(--primary);
+            border: 1px solid var(--stroke);
+            overflow: hidden;
+        }
+        
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .route-visual {
+            position: relative;
+            padding-left: 15px;
+            border-left: 2px dashed rgba(255, 255, 255, 0.15);
+        }
+        .route-point { font-size: 13px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;}
+        .route-label { font-size: 10px; color: var(--text-dim); width: 40px; }
+
+        /* Status Pills */
+        .status-pill {
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-pending { background: rgba(241, 196, 15, 0.15); color: var(--warning); border: 1px solid rgba(241, 196, 15, 0.3); }
+        .status-verified { background: rgba(0, 245, 184, 0.15); color: var(--primary); border: 1px solid rgba(0, 245, 184, 0.3); }
+        .status-rejected { background: rgba(255, 71, 87, 0.15); color: var(--danger); border: 1px solid rgba(255, 71, 87, 0.3); }
+        .status-paid { background: rgba(0, 210, 255, 0.15); color: var(--accent); border: 1px solid rgba(0, 210, 255, 0.3); }
+
+        /* Action Buttons */
+        .btn-icon {
+            text-decoration: none;
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center; justify-content: center;
+            border: 1px solid var(--stroke);
+            background: rgba(255,255,255,0.05);
+            color: var(--text-main);
+            transition: 0.2s;
+            margin-right: 5px;
+        }
+
+        .btn-icon:hover { background: var(--primary); color: #000; border-color: var(--primary); }
+        .btn-text {
+            font-size: 12px; font-weight: 600; color: var(--accent); cursor: pointer; text-decoration: none;
+        }
+        .btn-text:hover { text-decoration: underline; }
+
+        .price-tag {
+            font-family: 'Monaco', monospace;
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .utr-text { font-size: 11px; color: var(--text-dim); font-family: monospace; margin-top: 4px; }
+
+    </style>
 </head>
-<style>
-body {
-    margin: 0;
-    padding: 30px;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    /* Eco-friendly movement gradient */
-    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
-    color: #2d3436;
-    min-height: 100vh;
-}
-
-.Dashboard-Container {
-    max-width: 1200px;
-    margin: 0 auto;
-    background: rgba(255, 255, 255, 0.98);
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-h2 {
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 26px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: #1a4731; /* Deep Forest Green */
-}
-
-.table-responsive {
-    overflow-x: auto;
-    border-radius: 15px;
-    border: 1px solid #dfe6e9;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    font-size: 13px;
-}
-
-th {
-    background: #f8f9fa;
-    color: #636e72;
-    text-transform: uppercase;
-    font-weight: 700;
-    padding: 15px;
-    text-align: left;
-    border-bottom: 2px solid #00b894; /* Signature Emerald */
-}
-
-td {
-    padding: 15px;
-    border-bottom: 1px solid #f1f2f6;
-    vertical-align: middle;
-}
-
-tr:hover {
-    background-color: rgba(0, 184, 148, 0.04);
-}
-
-/* Status Badge Styling */
-.status-badge {
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 11px;
-    text-transform: capitalize;
-    background: #dfe6e9;
-    color: #2d3436;
-}
-
-.amount-text {
-    font-weight: 700;
-    color: #2d3436;
-    font-size: 14px;
-}
-
-.location-text {
-    max-width: 150px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: #0984e3; /* Blue for logistics tracking */
-}
-
-.user-info {
-    line-height: 1.4;
-}
-
-.user-info small {
-    display: block;
-    color: #636e72;
-    font-weight: normal;
-}
-
-</style>
 <body>
 
-    <div class="Dashboard-Container">
-        <h2>Booking & Parcel Logs</h2>
-        
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>User (Sender)</th>
-                        <th>Traveler (Carrier)</th>
-                        <th>Route (Pick -> Drop)</th>
-                        <th>Parcel Details</th>
-                        <th>Category</th>
-                        <th>Status</th>
-                        <th>Final Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for i in val %}
-                    <tr>
-                        <td class="user-info">
-                            <strong>{{ i.USERID.Name }}</strong>
-                            <small>{{ i.USERID.PhoneNo }}</small>
-                        </td>
-                        <td class="user-info">
-                            <strong>{{ i.TRAVELERID.Name }}</strong>
-                            <small>{{ i.TRAVELERID.PhoneNo }}</small>
-                        </td>
-                        <td>
-                            <div class="location-text" title="{{ i.PickupLocation }}">📍 {{ i.PickupLocation }}</div>
-                            <div class="location-text" title="{{ i.DropLocation }}">🏁 {{ i.DropLocation }}</div>
-                        </td>
-                        <td>{{ i.DeliveryDetails }}</td>
-                        <td><span style="color: #636e72;">{{ i.Category }}</span></td>
-                        <td><span class="status-badge">{{ i.BookingStatus }}</span></td>
-                        <td class="amount-text">₹{{ i.Amount }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <div class="container">
+        <div class="page-header">
+            <div class="title-block">
+                <h1>Booking Console</h1>
+                <span>Logistics & Ride Management</span>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 24px; font-weight: 700; color: #fff;">{{ val|length }}</div>
+                <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase;">Total Entries</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID & Date</th>
+                            <th>Sender (User)</th>
+                            <th>Carrier (Driver)</th>
+                            <th>Route Trajectory</th>
+                            <th>Booking Status</th>
+                            <th>Payment & Proof</th>
+                            <th>Evidence</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in val %}
+                        <tr>
+                            <td>
+                                <div class="id-badge">#BK-{{ i.id }}</div>
+                                <div style="font-size: 12px; color: var(--text-dim); margin-top: 5px;">
+                                    {{ i.BookingDate }}
+                                </div>
+                                <div style="font-size: 11px; color: var(--text-dim); font-weight: 600; margin-top: 2px;">
+                                    OTP: <span style="color: var(--primary);">{{ i.OtpCode }}</span>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="user-cell">
+                                    <div class="avatar">
+                                        {% if i.USERID.ProfilePhoto %}
+                                            <img src="{{ i.USERID.ProfilePhoto.url }}" alt="U">
+                                        {% else %}
+                                            {{ i.USERID.Name|slice:":1" }}
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 600;">{{ i.USERID.Name }}</div>
+                                        <div style="font-size: 12px; color: var(--text-dim);">{{ i.USERID.PhoneNo }}</div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="user-cell">
+                                    <div class="avatar" style="border-color: var(--accent); color: var(--accent);">
+                                        <i class="fa-solid fa-car-side"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 600;">{{ i.TRAVELERID.TRAVELERID.Name }}</div>
+                                        <div style="font-size: 11px; color: var(--accent);">
+                                            {{ i.TRAVELERID.VehicleType }} • {{ i.TRAVELERID.RideType }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="route-visual">
+                                    <div class="route-point">
+                                        <span class="route-label">PICKUP</span>
+                                        <span style="color: var(--primary);">{{ i.PickupLocation }}</span>
+                                    </div>
+                                    <div class="route-point">
+                                        <span class="route-label">DROP</span>
+                                        <span style="color: var(--accent);">{{ i.DropLocation }}</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="status-pill 
+                                    {% if i.BookingStatus == 'Pending' %}status-pending
+                                    {% elif i.BookingStatus == 'Verified' %}status-verified
+                                    {% elif i.BookingStatus == 'paid' %}status-paid
+                                    {% elif i.BookingStatus == 'Rejected' %}status-rejected
+                                    {% endif %}">
+                                    
+                                    {% if i.BookingStatus == 'Pending' %}<i class="fa-regular fa-clock"></i>
+                                    {% elif i.BookingStatus == 'Verified' %}<i class="fa-solid fa-check"></i>
+                                    {% elif i.BookingStatus == 'paid' %}<i class="fa-solid fa-coins"></i>
+                                    {% elif i.BookingStatus == 'Rejected' %}<i class="fa-solid fa-xmark"></i>
+                                    {% endif %}
+                                    {{ i.BookingStatus }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <div class="price-tag">₹{{ i.TRAVELERID.Amount }}</div>
+                                
+                                <div style="margin-top: 6px;">
+                                    {% if i.PaymentStatus == 'Paid' or i.PaymentStatus == 'Tip Sent' %}
+                                        <span style="color: var(--primary); font-size: 11px; font-weight: 700;">● PAID</span>
+                                    {% elif i.PaymentStatus == 'Proof Uploaded' %}
+                                        <span style="color: var(--warning); font-size: 11px; font-weight: 700;">● NEEDS APPROVAL</span>
+                                    {% else %}
+                                        <span style="color: var(--text-dim); font-size: 11px;">● {{ i.PaymentStatus }}</span>
+                                    {% endif %}
+                                </div>
+
+                                {% if i.UTR %}
+                                    <div class="utr-text">UTR: {{ i.UTR }}</div>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <div style="display: flex; gap: 8px;">
+                                    {% if i.ParcelImage %}
+                                        <a href="{{ i.ParcelImage.url }}" target="_blank" class="btn-icon" title="View Parcel">
+                                            <i class="fa-solid fa-box-open"></i>
+                                        </a>
+                                    {% else %}
+                                        <div class="btn-icon" style="opacity: 0.3; cursor: not-allowed;"><i class="fa-solid fa-box-open"></i></div>
+                                    {% endif %}
+
+                                    {% if i.PaymentProof %}
+                                        <a href="{{ i.PaymentProof.url }}" target="_blank" class="btn-icon" title="View Payment Proof" style="color: var(--warning); border-color: rgba(241, 196, 15, 0.3);">
+                                            <i class="fa-solid fa-receipt"></i>
+                                        </a>
+                                    {% else %}
+                                        <div class="btn-icon" style="opacity: 0.3; cursor: not-allowed;"><i class="fa-solid fa-receipt"></i></div>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+
+</body>
+</html> {% endcomment %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENROUTE | Booking Master</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* --- COLOR PALETTE --- */
+            --primary: #00f5b8;        /* Neon Mint */
+            --accent: #00d2ff;         /* Electric Blue */
+            --warning: #f1c40f;        /* Alert Yellow */
+            --danger: #ff4757;         /* Crimson Red */
+            --bg-dark: #05070a;        /* Deep Space */
+            
+            /* --- GLASSMORPHISM --- */
+            --glass-panel: rgba(15, 20, 25, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-dark) url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        body::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to bottom, rgba(5, 7, 10, 0.85), rgba(5, 7, 10, 0.98));
+            z-index: -1;
+        }
+
+        /* --- NAVIGATION --- */
+        .back-nav {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 100;
+        }
+
+        .back-nav:hover {
+            background: var(--primary);
+            color: #05070a;
+            border-color: var(--primary);
+            transform: translateX(-5px);
+            box-shadow: 0 0 20px rgba(0, 245, 184, 0.4);
+        }
+
+        /* --- CONTAINER --- */
+        .container {
+            width: 95%;
+            max-width: 1400px;
+            margin-top: 100px;
+            margin-bottom: 50px;
+            animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- HEADER --- */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .header-title h1 {
+            font-size: 32px;
+            margin: 0;
+            font-weight: 800;
+            background: linear-gradient(120deg, #ffffff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .header-title span {
+            font-size: 12px;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-top: 5px;
+            display: block;
+        }
+
+        /* --- TABLE --- */
+        .glass-table-container {
+            background: var(--glass-panel);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .table-scroll { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 1200px; }
+        thead { background: rgba(255, 255, 255, 0.03); }
+
+        th {
+            text-align: left;
+            padding: 24px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            font-weight: 700;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        td {
+            padding: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            vertical-align: middle;
+            font-size: 14px;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+        /* --- TABLE COMPONENTS --- */
+        .id-badge {
+            font-family: 'Monaco', monospace;
+            color: var(--accent);
+            background: rgba(0, 210, 255, 0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+        
+        .info-group { display: flex; align-items: center; gap: 15px; }
+        .avatar {
+            width: 42px; height: 42px;
+            border-radius: 12px;
+            background: #151a21;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-muted);
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .name-text { font-weight: 600; color: #fff; display: block; margin-bottom: 2px; }
+        .sub-text { font-size: 12px; color: var(--text-muted); }
+
+        .route-path {
+            position: relative;
+            padding-left: 20px;
+            border-left: 2px dashed var(--glass-border);
+        }
+        .route-node { position: relative; margin-bottom: 8px; }
+        .route-node:last-child { margin-bottom: 0; }
+        .route-node::before {
+            content: ''; position: absolute; left: -25px; top: 6px;
+            width: 8px; height: 8px; border-radius: 50%;
+        }
+        .node-pickup::before { background: var(--primary); box-shadow: 0 0 10px var(--primary); }
+        .node-drop::before { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+        .loc-label { font-size: 10px; color: var(--text-muted); margin-right: 5px; opacity: 0.7; font-weight: 700; }
+
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .st-pending { background: rgba(241, 196, 15, 0.1); color: var(--warning); border: 1px solid rgba(241, 196, 15, 0.2); }
+        .st-verified { background: rgba(0, 245, 184, 0.1); color: var(--primary); border: 1px solid rgba(0, 245, 184, 0.2); }
+        .st-rejected { background: rgba(255, 71, 87, 0.1); color: var(--danger); border: 1px solid rgba(255, 71, 87, 0.2); }
+        .st-paid { background: rgba(0, 210, 255, 0.1); color: var(--accent); border: 1px solid rgba(0, 210, 255, 0.2); }
+
+        .price-display {
+            font-family: 'Monaco', monospace;
+            font-weight: 700;
+            font-size: 15px;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        /* --- EVIDENCE BUTTONS --- */
+        .evidence-btn {
+            display: inline-flex;
+            width: 36px; height: 36px;
+            align-items: center; justify-content: center;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            margin-right: 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .evidence-btn:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(0, 210, 255, 0.15);
+        }
+        .disabled-btn { opacity: 0.2; cursor: not-allowed; pointer-events: none; }
+
+        /* --- MODAL (LIGHTBOX) STYLES --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-content img {
+            max-width: 100%;
+            max-height: 85vh;
+            display: block;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 40px;
+            color: #fff;
+            cursor: pointer;
+            z-index: 1001;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: var(--danger);
+        }
+
+    </style>
+</head>
+<body>
+
+    <a href="/adminhome" class="back-nav">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Dashboard</span>
+    </a>
+
+    <div class="container">
+        
+        <div class="page-header">
+            <div class="header-title">
+                <h1>Booking Console</h1>
+                <span>Live Transaction Monitoring</span>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 24px; font-weight: 700; color: #fff;">{{ val|length }}</div>
+                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Total Entries</div>
+            </div>
+        </div>
+
+        <div class="glass-table-container">
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Sender (User)</th>
+                            <th>Carrier (Driver)</th>
+                            <th>Route Trajectory</th>
+                            <th>Status</th>
+                            <th>Payment</th>
+                            <th>Evidence</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in val %}
+                        <tr>
+                            <td>
+                                <div class="id-badge">#BK-{{ i.id }}</div>
+                                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">{{ i.BookingDate }}</div>
+                                <div style="font-size: 11px; font-weight: 600; color: var(--text-muted);">
+                                    OTP: <span style="color: var(--primary); letter-spacing: 1px;">{{ i.OtpCode }}</span>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="info-group">
+                                    <div class="avatar">
+                                        {% if i.USERID.ProfilePhoto %}
+                                            <img src="{{ i.USERID.ProfilePhoto.url }}" alt="User">
+                                        {% else %}
+                                            <i class="fa-solid fa-user"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <span class="name-text">{{ i.USERID.Name }}</span>
+                                        <span class="sub-text">{{ i.USERID.PhoneNo }}</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="info-group">
+                                    <div class="avatar" style="border-color: rgba(0, 210, 255, 0.3); color: var(--accent);">
+                                        <i class="fa-solid fa-car"></i>
+                                    </div>
+                                    <div>
+                                        <span class="name-text">{{ i.TRAVELERID.TRAVELERID.Name }}</span>
+                                        <span class="sub-text" style="color: var(--accent);">
+                                            {{ i.TRAVELERID.VehicleType }} • {{ i.TRAVELERID.RideType }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="route-path">
+                                    <div class="route-node node-pickup">
+                                        <span class="loc-label">FROM</span>
+                                        <span style="font-size: 13px;">{{ i.PickupLocation }}</span>
+                                    </div>
+                                    <div class="route-node node-drop">
+                                        <span class="loc-label">TO</span>
+                                        <span style="font-size: 13px;">{{ i.DropLocation }}</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="status-badge 
+                                    {% if i.BookingStatus == 'Pending' %}st-pending
+                                    {% elif i.BookingStatus == 'Verified' %}st-verified
+                                    {% elif i.BookingStatus == 'paid' %}st-paid
+                                    {% elif i.BookingStatus == 'Rejected' %}st-rejected
+                                    {% endif %}">
+                                    
+                                    {% if i.BookingStatus == 'Pending' %}<i class="fa-regular fa-clock"></i>
+                                    {% elif i.BookingStatus == 'Verified' %}<i class="fa-solid fa-check"></i>
+                                    {% elif i.BookingStatus == 'paid' %}<i class="fa-solid fa-coins"></i>
+                                    {% elif i.BookingStatus == 'Rejected' %}<i class="fa-solid fa-ban"></i>
+                                    {% endif %}
+                                    {{ i.BookingStatus }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <div class="price-display">₹{{ i.TRAVELERID.Amount }}</div>
+                                
+                                {% if i.PaymentStatus == 'Paid' or i.PaymentStatus == 'Tip Sent' %}
+                                    <span style="color: var(--primary); font-size: 11px; font-weight: 700;">● SETTLED</span>
+                                {% elif i.PaymentStatus == 'Proof Uploaded' %}
+                                    <span style="color: var(--warning); font-size: 11px; font-weight: 700;">● REVIEW NEEDED</span>
+                                {% else %}
+                                    <span style="color: var(--text-muted); font-size: 11px;">● {{ i.PaymentStatus }}</span>
+                                {% endif %}
+
+                                {% if i.UTR %}
+                                    <div style="font-family: monospace; font-size: 10px; color: var(--text-muted); margin-top: 4px; opacity: 0.8;">
+                                        UTR: {{ i.UTR }}
+                                    </div>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if i.ParcelImage %}
+                                    <a href="#" onclick="openModal('{{ i.ParcelImage.url }}'); return false;" class="evidence-btn" title="View Parcel Photo">
+                                        <i class="fa-solid fa-box-open"></i>
+                                    </a>
+                                {% else %}
+                                    <span class="evidence-btn disabled-btn"><i class="fa-solid fa-box-open"></i></span>
+                                {% endif %}
+
+                                {% if i.PaymentProof %}
+                                    <a href="#" onclick="openModal('{{ i.PaymentProof.url }}'); return false;" class="evidence-btn" title="View Payment Receipt" style="color: var(--warning); border-color: rgba(241, 196, 15, 0.3);">
+                                        <i class="fa-solid fa-receipt"></i>
+                                    </a>
+                                {% else %}
+                                    <span class="evidence-btn disabled-btn"><i class="fa-solid fa-receipt"></i></span>
+                                {% endif %}
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="imageModal" class="modal-overlay" onclick="closeModal()">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img id="modalImage" src="" alt="Evidence">
+        </div>
+    </div>
+
+    <script>
+        function openModal(imageUrl) {
+            var modal = document.getElementById("imageModal");
+            var modalImg = document.getElementById("modalImage");
+            
+            modalImg.src = imageUrl;
+            modal.classList.add("active");
+            
+            // Prevent scrolling on body when modal is open
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeModal() {
+            var modal = document.getElementById("imageModal");
+            modal.classList.remove("active");
+            
+            // Re-enable scrolling
+            document.body.style.overflow = "auto";
+            
+            // Clear src after animation to prevent flashing old image next time
+            setTimeout(() => {
+                document.getElementById("modalImage").src = "";
+            }, 300);
+        }
+
+        // Close on Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                closeModal();
+            }
+        });
+    </script>
 
 </body>
 </html>

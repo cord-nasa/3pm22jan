@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 
 class LoginTable(models.Model):
-    Username = models.CharField(max_length=30, null=True, blank=True)
+    Username = models.CharField(max_length=50, null=True, blank=True)
     Password = models.CharField(max_length=30, null=True, blank=True)
     UserType = models.CharField(max_length=30, null=True, blank=True)
 
@@ -15,8 +15,8 @@ class UserTable(models.Model):
     Place = models.CharField(max_length=30, null=True, blank=True)
     # ADD THIS LINE:
     ProfilePhoto = models.ImageField(upload_to='profiles/', null=True, blank=True)
-
-
+    IdProof = models.ImageField(upload_to='id_proofs/', null=True, blank=True)
+    UpiId = models.CharField(max_length=50, null=True, blank=True)
 # class TravelRouteTable(models.Model):
 #     # USERID = models.ForeignKey(UserTable, on_delete=models.CASCADE, related_name="route_user", null=True, blank=True)
 #     TRAVELERID = models.ForeignKey(UserTable, on_delete=models.CASCADE, related_name="route_traveler", null=True, blank=True)
@@ -61,8 +61,13 @@ class BookingTable(models.Model):
     BookingDate = models.DateField(auto_now_add=True, null=True, blank=True)
     OtpCode = models.CharField(max_length=10, null=True, blank=True)
     ParcelImage = models.ImageField(upload_to='parcel_pics/', null=True, blank=True)
-
-
+    # Add these payment fields if they don't exist:
+    PaymentStatus = models.CharField(max_length=50, default='Pending')
+    PaymentProof = models.ImageField(upload_to='payment_proofs/', blank=True, null=True)
+    UTR = models.CharField(max_length=100, blank=True, null=True)
+    
+    def __str__(self):
+        return f"Booking {self.id} - {self.BookingStatus}"
 
 class ComplaintsTable(models.Model):
     USERID = models.ForeignKey(UserTable,on_delete=models.CASCADE)
@@ -98,6 +103,14 @@ class TipTable(models.Model):
     Tip = models.CharField(max_length=100, null=True, blank=True)
     Created_At = models.DateField(auto_now_add=True)
 
+
+# In models.py
+
+class SettlementTable(models.Model):
+    TRAVELER = models.ForeignKey(UserTable, on_delete=models.CASCADE)
+    Amount = models.FloatField()
+    UTR = models.CharField(max_length=100)
+    Date = models.DateTimeField(auto_now_add=True)
 
 
 

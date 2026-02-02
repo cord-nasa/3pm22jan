@@ -3,176 +3,499 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Feedback </title>
+    <title>ENROUTE | User Feedback</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f5b8; 
+            --accent: #ffcb00; /* Sophisticated Gold for Ratings */
+            --glass-base: rgba(255, 255, 255, 0.07); 
+            --glass-stroke: rgba(255, 255, 255, 0.35);
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #080a0a url('https://images.unsplash.com/photo-1476820865390-c52aeebb9891?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat fixed;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.8) 100%);
+            z-index: -1;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            background: var(--glass-base);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            padding: 45px;
+            box-shadow: 0 50px 120px rgba(0, 0, 0, 0.4);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: 4px;
+            background: linear-gradient(to bottom, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 11px;
+            color: var(--primary);
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 28px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: white;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            padding: 22px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-stroke);
+        }
+
+        td {
+            padding: 20px;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: middle;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rating-chip {
+            background: rgba(255, 203, 0, 0.1);
+            color: var(--accent);
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 13px;
+            border: 1px solid rgba(255, 203, 0, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .comment-text {
+            color: #dfe6e9;
+            line-height: 1.6;
+            font-style: italic;
+            max-width: 450px;
+            position: relative;
+            padding-left: 15px;
+            border-left: 2px solid var(--primary);
+        }
+
+        .date-badge {
+            font-family: 'monospace';
+            font-size: 12px;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+    </style>
 </head>
 <body>
-    <h2>View Feedback</h2>
-    <table border="1">
 
-<tr>
-    <th>User</th>
-    <th>overall rating</th>
-    <th>comments</th>
-    <th>feedback date</th>
-</tr>
-{% for i in val %}
-<tr>
-    <td>{{ i.USERID.Name }}</td>
-    <td>{{ i.Rating}} </td>
-    <td>{{ i.Comment}}</td>
-    <td>{{ i.FeedbackDate}}</td>
-</tr>
-{% endfor %}
-</table>
+    <div class="container">
+        <div class="header-section">
+            <h1>User Insights</h1>
+            <span class="subtitle">System Sentiment & Feedback</span>
+        </div>
+        
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>User Identity</th>
+                        <th>Quality Rating</th>
+                        <th>User Testimony</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in val %}
+                    <tr>
+                        <td class="user-name">
+                            <div style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #004d3d; font-weight: 800;">{{ i.USERID.Name|slice:":1" }}</div>
+                            {{ i.USERID.Name }}
+                        </td>
+                        <td>
+                            <div class="rating-chip">
+                                <span>★</span> {{ i.Rating }}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="comment-text">"{{ i.Comment }}"</div>
+                        </td>
+                        <td>
+                            <span class="date-badge">{{ i.FeedbackDate }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </body>
 </html> {% endcomment %}
-
-
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ENROUTE | User Feedback</title>
+    <title>ENROUTE | User Insights</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* Brand Colors */
+            --primary: #00f5b8;        /* Neon Mint */
+            --gold: #f1c40f;           /* Star Gold */
+            --bg-dark: #05070a;        /* Deep Space */
+            
+            /* Glassmorphism */
+            --glass-panel: rgba(20, 25, 30, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --surface-hover: rgba(255, 255, 255, 0.03);
+            
+            /* Typography */
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-dark) url('https://images.unsplash.com/photo-1476820865390-c52aeebb9891?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        body::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to bottom, rgba(5, 7, 10, 0.85), rgba(5, 7, 10, 0.98));
+            z-index: -1;
+        }
+
+        /* --- NAVIGATION --- */
+        .back-nav {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 100;
+        }
+
+        .back-nav:hover {
+            background: var(--primary);
+            color: #05070a;
+            border-color: var(--primary);
+            transform: translateX(-5px);
+            box-shadow: 0 0 20px rgba(0, 245, 184, 0.4);
+        }
+
+        /* --- MAIN CONTAINER --- */
+        .container {
+            width: 95%;
+            max-width: 1200px;
+            margin-top: 100px;
+            margin-bottom: 50px;
+            animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- HEADER --- */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .header-title h1 {
+            font-size: 32px;
+            margin: 0;
+            font-weight: 800;
+            background: linear-gradient(120deg, #ffffff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .header-title span {
+            font-size: 12px;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-top: 5px;
+            display: block;
+        }
+
+        /* Stats Pill */
+        .stats-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
+        .stat-val { font-size: 20px; font-weight: 800; color: #fff; }
+        .stat-lbl { font-size: 11px; color: var(--text-muted); text-transform: uppercase; }
+
+        /* --- TABLE --- */
+        .glass-table-container {
+            background: var(--glass-panel);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .table-scroll { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+
+        th {
+            text-align: left;
+            padding: 24px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            font-weight: 700;
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.02);
+        }
+
+        td {
+            padding: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            vertical-align: middle;
+            font-size: 14px;
+        }
+
+        tr:hover td { background: var(--surface-hover); }
+
+        /* --- COLUMN STYLES --- */
+        
+        /* User */
+        .user-info { display: flex; align-items: center; gap: 12px; }
+        .avatar {
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: var(--primary);
+            border: 2px solid rgba(0, 245, 184, 0.2);
+        }
+        .u-name { font-weight: 600; color: #fff; display: block; }
+        .u-role { font-size: 11px; color: var(--text-muted); }
+
+        /* Rating */
+        .rating-badge {
+            background: rgba(241, 196, 15, 0.15);
+            color: var(--gold);
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 14px;
+            border: 1px solid rgba(241, 196, 15, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Comment */
+        .comment-box {
+            position: relative;
+            padding-left: 16px;
+            border-left: 3px solid var(--primary);
+            color: #e2e8f0;
+            font-style: italic;
+            line-height: 1.6;
+            max-width: 500px;
+        }
+        .comment-box::before {
+            content: '"';
+            font-size: 24px;
+            color: var(--primary);
+            position: absolute;
+            top: -10px;
+            left: 5px;
+            opacity: 0.5;
+        }
+
+        /* Date */
+        .date-tag {
+            font-family: 'Monaco', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 6px 10px;
+            border-radius: 6px;
+        }
+
+    </style>
 </head>
-<style>
-body {
-    margin: 0;
-    padding: 30px;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    /* Modern Gradient Background: Represents ecology and trust */
-    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
-    color: #2d3436;
-    min-height: 100vh;
-}
-
-.Dashboard-Container {
-    max-width: 1000px;
-    margin: 0 auto;
-    background: rgba(255, 255, 255, 0.98);
-    padding: 40px;
-    border-radius: 24px;
-    /* Layered shadow for a "floating" modern look */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05), 0 20px 50px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-}
-
-h2 {
-    text-align: center;
-    margin-bottom: 40px;
-    font-size: 26px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #1a4731; /* Deep Forest Green for branding consistency */
-}
-
-.table-responsive {
-    overflow-x: auto;
-    border-radius: 16px;
-    background: #ffffff;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-}
-
-th {
-    background: #f8f9fa;
-    color: #636e72;
-    text-transform: uppercase;
-    font-size: 11px;
-    font-weight: 800;
-    padding: 20px;
-    text-align: left;
-    border-bottom: 3px solid #00b894; /* Signature ENROUTE Emerald */
-}
-
-td {
-    padding: 20px;
-    border-bottom: 1px solid #f1f2f6;
-    vertical-align: middle;
-}
-
-tr:last-child td {
-    border-bottom: none;
-}
-
-tr:hover {
-    background-color: rgba(0, 184, 148, 0.03); /* Subtle branding tint */
-}
-
-.user-cell {
-    font-weight: 700;
-    color: #2d3436;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.rating-badge {
-    background: #fff9db;
-    color: #f08c00;
-    padding: 4px 10px;
-    border-radius: 8px;
-    font-weight: 800;
-    font-size: 13px;
-    border: 1px solid #ffe066;
-}
-
-.comment-box {
-    color: #4b5563;
-    line-height: 1.6;
-    font-style: italic;
-    max-width: 400px;
-}
-
-.date-tag {
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 12px;
-    color: #9ca3af;
-    background: #f3f4f6;
-    padding: 2px 8px;
-    border-radius: 4px;
-}
-
-</style>
 <body>
 
-    <div class="Dashboard-Container">
-        <h2>System Insights & Feedback</h2>
+    <a href="/adminhome" class="back-nav">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Dashboard</span>
+    </a>
+
+    <div class="container">
         
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>User</th>
-                        <th>Overall Rating</th>
-                        <th>Comments</th>
-                        <th>Feedback Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for i in val %}
-                    <tr>
-                        <td class="user-cell">
-                            <span>👤</span> {{ i.USERID.Name }}
-                        </td>
-                        <td>
-                            <span class="rating-badge">⭐ {{ i.Rating }} / 5</span>
-                        </td>
-                        <td>
-                            <div class="comment-box">"{{ i.Comment }}"</div>
-                        </td>
-                        <td>
-                            <span class="date-tag">{{ i.FeedbackDate }}</span>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="page-header">
+            <div class="header-title">
+                <h1>User Insights</h1>
+                <span>System Sentiment Analysis</span>
+            </div>
+            
+            <div class="stats-pill">
+                <div style="text-align: right;">
+                    <div class="stat-val">{{ val|length }}</div>
+                    <div class="stat-lbl">Total Reviews</div>
+                </div>
+                <i class="fa-solid fa-comments" style="font-size: 24px; color: var(--primary); opacity: 0.8;"></i>
+            </div>
+        </div>
+
+        <div class="glass-table-container">
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User Profile</th>
+                            <th>Satisfaction Score</th>
+                            <th>Feedback Testimony</th>
+                            <th>Submission Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in val %}
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <div class="avatar">
+                                        {{ i.USERID.Name|slice:":1" }}
+                                    </div>
+                                    <div>
+                                        <span class="u-name">{{ i.USERID.Name }}</span>
+                                        <span class="u-role">Verified User</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="rating-badge">
+                                    <i class="fa-solid fa-star"></i> {{ i.Rating }}
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="comment-box">
+                                    {{ i.Comment }}
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="date-tag">{{ i.FeedbackDate }}</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

@@ -1,195 +1,384 @@
-{% comment %} <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-</head>
-<style>
-body{
-    margin:0;
-    padding:0;
-    font-family:sans-serif;
-    background: blue;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-.Login-box{
-    width: 200px;   
-    background: white;
-    padding: 40px;
-    border-radius: 8px;
-    box-shadow: 0px 0px 10px black;
-
-}
-h2{
-    text-align: center;
-    margin-bottom: 40px;
-}
-.Login-box input{
-    width: 100%;
-    padding: 5px;
-    border: 1px solid black;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    font-size: 14px;
-
-
-}
-.Login-box button{
-    width:90px;
-    padding:6px;
-    margin-left: 50px;
-    background-color: orange;
-    border-radius: 7px;
-
-}
-.Login-box button:hover {
-    background-color: red;
-
-}
-.Login-box label{
-    font-size: 14px;
-    font-weight: bold;
-}
-
-</style>
-<body>
-
-    <form method="post">
-        {% csrf_token %}
-
-        <table>
-            <div class="Login-box">
-
-    <h2>Login</h2>
-          
-                <label>Username:</label><br>
-                <input type="text" name="username" placeholder= "Enter your username"><br>
-           
-                <label>Password:</label><br>
-                <input type="text" name="password"placeholder="Enter your password"><br>
-                <button>Login</button>
-          
-
-            </div>
-        </table>
-    </form>
-</body>
-</html> {% endcomment %}
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ENROUTE | Login</title>
+    <title>ENROUTE | Move With Purpose</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #00b894;
+            --accent-teal: #00cec9;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-light: #ffffff;
+            --neon-glow: rgba(0, 184, 148, 0.6);
+            --gold-accent: #ffd700;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                        url('https://images.unsplash.com/photo-1476820865390-c52aeebb9891?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Frosted Glass Login Box */
+        .login-container {
+            width: 400px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 50px 45px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5),
+                        0 0 30px rgba(0, 184, 148, 0.2);
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary-green), transparent);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* HIGH-END LUXURY LOGO */
+        .logo-container {
+            position: relative;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+        }
+
+        .brand-logo {
+            font-size: 40px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, 
+                #ffffff 0%,
+                #e6fffa 30%,
+                var(--primary-green) 70%,
+                var(--accent-teal) 100%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-fill-color: transparent;
+            margin: 0;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+            text-shadow: 0 2px 20px var(--neon-glow);
+            animation: logoGlow 3s ease-in-out infinite alternate;
+        }
+
+        .brand-logo::before {
+            content: '▶';
+            position: absolute;
+            left: -35px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-green);
+            font-size: 24px;
+            opacity: 0.7;
+            animation: pulse 2s infinite;
+        }
+
+        .brand-logo::after {
+            content: '◀';
+            position: absolute;
+            right: -35px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-teal);
+            font-size: 24px;
+            opacity: 0.7;
+            animation: pulse 2s infinite reverse;
+        }
+
+        @keyframes logoGlow {
+            from { text-shadow: 0 2px 20px var(--neon-glow); }
+            to { text-shadow: 0 2px 30px rgba(0, 184, 148, 0.8), 0 0 40px rgba(0, 184, 148, 0.4); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: translateY(-50%) scale(1); }
+            50% { opacity: 1; transform: translateY(-50%) scale(1.1); }
+        }
+
+        .logo-subtitle {
+            font-size: 9px;
+            color: var(--accent-teal);
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-top: 7px;
+            opacity: 0.8;
+            position: relative;
+        }
+
+        .logo-subtitle::before,
+        .logo-subtitle::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 20px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-teal), transparent);
+        }
+
+        .logo-subtitle::before {
+            left: -30px;
+        }
+
+        .logo-subtitle::after {
+            right: -30px;
+        }
+
+        .motto {
+            font-size: 11px;
+            color: #a8fff0;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 30px;
+            display: block;
+            text-shadow: 0 1px 10px rgba(168, 255, 240, 0.3);
+            position: relative;
+            padding-top: 10px;
+        }
+
+        .motto::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary-green), transparent);
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .input-group label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-left: 15px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 16px 22px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            color: white;
+            font-size: 15px;
+            box-sizing: border-box;
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            font-weight: 400;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 25px rgba(0, 184, 148, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 300;
+        }
+
+        /* Premium Gradient Button */
+        button {
+            width: 100%;
+            padding: 18px;
+            margin-top: 10px;
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--accent-teal) 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0, 184, 148, 0.4);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 184, 148, 0.6);
+            filter: brightness(1.1);
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        .footer-links {
+            margin-top: 35px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 1px;
+        }
+
+        .footer-links a {
+            color: var(--accent-teal);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+            position: relative;
+            padding-bottom: 2px;
+        }
+
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent-teal);
+            transition: width 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #ffffff;
+        }
+
+        .footer-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Premium Road Path Element */
+        .road-line {
+            height: 2px;
+            width: 70px;
+            background: linear-gradient(90deg, transparent, var(--primary-green), transparent);
+            margin: 35px auto;
+            position: relative;
+        }
+
+        .road-line::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #ffffff;
+            border-radius: 50%;
+            top: -5px;
+            left: 0;
+            animation: drive 2.5s infinite cubic-bezier(0.65, 0, 0.35, 1);
+            box-shadow: 0 0 15px var(--primary-green);
+        }
+
+        @keyframes drive {
+            0% { left: 0%; transform: scale(1); opacity: 0; }
+            10% { opacity: 1; }
+            50% { transform: scale(1.2); }
+            90% { opacity: 1; }
+            100% { left: 100%; transform: scale(1); opacity: 0; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .login-container {
+                width: 90%;
+                padding: 40px 25px;
+            }
+            
+            .brand-logo {
+                font-size: 36px;
+                letter-spacing: 4px;
+            }
+            
+            .brand-logo::before,
+            .brand-logo::after {
+                display: none;
+            }
+        }
+    </style>
 </head>
-<style>
-body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    /* Modern Gradient Background: Represents movement and ecology */
-    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.Login-box {
-    width: 280px;   
-    background: rgba(255, 255, 255, 0.95);
-    padding: 40px;
-    border-radius: 20px;
-    /* Layered shadow for a "floating" modern look */
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05), 0 20px 48px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-h2 {
-    text-align: center;
-    margin-bottom: 30px;
-    /* Professional Slate for text */
-    color: #2d3436;
-    font-size: 24px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.Login-box label {
-    font-size: 12px;
-    font-weight: 700;
-    color: #636e72;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-    display: block;
-}
-
-.Login-box input {
-    width: 100%;
-    padding: 12px 15px;
-    margin-bottom: 20px;
-    border: 1.5px solid #dfe6e9;
-    border-radius: 10px;
-    font-size: 14px;
-    box-sizing: border-box;
-    transition: all 0.3s ease;
-    background: #fdfdfd;
-}
-
-.Login-box input:focus {
-    outline: none;
-    border-color: #00b894; /* ENROUTE Theme Green */
-    box-shadow: 0 0 0 4px rgba(0, 184, 148, 0.1);
-}
-
-.Login-box button {
-    width: 100%; /* Full width for modern mobile-first feel */
-    padding: 12px;
-    margin-left: 0;
-    /* Gradient button: Emerald to Teal */
-    background: linear-gradient(to right, #00b894, #00cec9);
-    color: white; 
-    border: none; 
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 16px;
-    box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.Login-box button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4);
-}
-
-.Login-box button:active {
-    transform: translateY(0);
-}
-
-</style>
 <body>
 
-    <form method="post">
+    <form method="post" action="/">
         {% csrf_token %}
 
-        <div class="Login-box">
-            <h2>ENROUTE</h2>
+        <div class="login-container">
+            <div class="logo-container">
+                <div class="brand-logo">ENROUTE</div>
+                <div class="logo-subtitle">MOVE WITH PURPOSE </div>
+            </div>
             
-            <label>Username</label>
-            <input type="text" name="username" placeholder="Enter your username">
+            <span class="motto">Zero Miles Wasted</span>
             
-            <label>Password</label>
-            <input type="password" name="password" placeholder="Enter your password">
-            
-            <button type="submit">Login</button>
-        </div>
+            <div class="road-line"></div>
 
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="admin" required>
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit">SIGN IN</button>
+
+            {% comment %} <div class="footer-links">
+                <a href="#">Admin Access</a> • 
+                <a href="#">Support</a> • 
+                <a href="#">System Status</a>
+            </div> {% endcomment %}
+        </div>
     </form>
+
 </body>
 </html>
