@@ -468,3 +468,7 @@ EMAIL_HOST_PASSWORD = os.environ.get('ems_key', 'chhu bboa dizs vfvg')
 # =========================================================
 STRIPE_PUBLISHABLE_KEY = "pk_test_your_key_here"
 STRIPE_SECRET_KEY = "sk_test_your_secret_key_here"
+
+# settings.py
+
+WHITENOISE_MANIFEST_STRICT = False
