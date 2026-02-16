@@ -425,7 +425,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Whitenoise for Static Files (CSS/JS)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
+WHITENOISE_MANIFEST_STRICT = False
 
 # =========================================================
 # MEDIA FILES (CLOUDINARY CONFIGURATION)
