@@ -425,7 +425,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Whitenoise for Static Files (CSS/JS)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
+WHITENOISE_MANIFEST_STRICT = False
 # =========================================================
 # MEDIA FILES (CLOUDINARY CONFIGURATION)
 # =========================================================
@@ -470,5 +470,3 @@ STRIPE_PUBLISHABLE_KEY = "pk_test_your_key_here"
 STRIPE_SECRET_KEY = "sk_test_your_secret_key_here"
 
 # settings.py
-
-WHITENOISE_MANIFEST_STRICT = False
