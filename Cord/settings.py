@@ -423,10 +423,12 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Whitenoise for Static Files (CSS/JS)
+# Use CompressedStaticFilesStorage but configure it to be less strict
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
-
+# Add these settings to handle missing files gracefully
+WHITENOISE_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+WHITENOISE_SKIP_MISSING_FILES = True
 # =========================================================
 # MEDIA FILES (CLOUDINARY CONFIGURATION)
 # =========================================================
