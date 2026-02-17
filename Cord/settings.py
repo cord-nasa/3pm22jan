@@ -337,12 +337,14 @@ ALLOWED_HOSTS = ['*'] # Required for Render
 
 INSTALLED_APPS = [
     # --- CLOUDINARY APPS (Must be before staticfiles if using for static, good practice generally) ---
+    'django.contrib.staticfiles',  # Move this to the top of the group
     'cloudinary_storage', 
-    'django.contrib.staticfiles', 
     'cloudinary',
+    'django.contrib.admin',
+
+    
     
     # --- DEFAULT APPS ---
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -423,9 +425,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Use CompressedStaticFilesStorage but configure it to be less strict
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-
+# This still compresses files but won't crash the entire build if one is missing
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+WHITENOISE_MANIFEST_STRICT = False
 # Add these settings to handle missing files gracefully
 WHITENOISE_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 WHITENOISE_SKIP_MISSING_FILES = True
