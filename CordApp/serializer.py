@@ -118,31 +118,33 @@ class UserSerializer(serializers.ModelSerializer):
             return obj.PaymentProof.url
         return None
     
-# class BookingSerializer1(serializers.ModelSerializer):
-#     """ Used for Booking History and OTP visibility """
-#     RideAvailability = serializers.CharField(source='TRAVELERID.RideAvailability', default="N/A")
-#     SpaceAvailability = serializers.CharField(source='TRAVELERID.SpaceAvailability', default="N/A")
-#     Amount = serializers.FloatField(source='TRAVELERID.Amount', default=0.0)
-#     RideType = serializers.CharField(source='TRAVELERID.RideType', default="Ride")
-#     StartingTime = serializers.TimeField(source='TRAVELERID.StartingTime', default="00:00:00")
-#     EndingTime = serializers.TimeField(source='TRAVELERID.EndingTime', default="00:00:00")
-#     StartLocation = serializers.CharField(source='TRAVELERID.StartLocation', default="")
-#     EndLocation = serializers.CharField(source='TRAVELERID.EndLocation', default="")
-#     Kms = serializers.FloatField(source='TRAVELERID.Kms', default=0.0)
-#     VehicleType = serializers.CharField(source='TRAVELERID.VehicleType', default="Sedan")
-#     Startdate = serializers.DateField(source='TRAVELERID.StartDate', allow_null=True)
-#     Enddate = serializers.DateField(source='TRAVELERID.EndDate', allow_null=True)
-#     Name = serializers.CharField(source='TRAVELERID.TRAVELERID.Name', default="Eco Traveler")
-#     PhoneNo = serializers.CharField(source='TRAVELERID.TRAVELERID.PhoneNo', default="")
-#     BagSize = serializers.CharField(source='TRAVELERID.BagSize', default="Standard Bag")
-#     class Meta:
-#         model = BookingTable
-#         fields = [
-#             'id', 'PickupLocation', 'DropLocation', 'BookingStatus', 'Amount', 
-#             'BookingDate', 'OtpCode', 'RideAvailability', 'SpaceAvailability', 
-#             'RideType', 'StartingTime', 'EndingTime', 'StartLocation', 'EndLocation', 
-#             'Name', 'PhoneNo', 'Kms', 'VehicleType', 'Startdate', 'Enddate', 'BagSize', 'PaymentStatus'
-#         ]
+    
+class BookingSerializer1(serializers.ModelSerializer):
+    """ Used for Booking History and OTP visibility - Safe Version """
+    RideAvailability = serializers.CharField(source='TRAVELERID.RideAvailability', default="N/A", read_only=True)
+    SpaceAvailability = serializers.CharField(source='TRAVELERID.SpaceAvailability', default="N/A", read_only=True)
+    Amount = serializers.FloatField(source='TRAVELERID.Amount', default=0.0, read_only=True)
+    RideType = serializers.CharField(source='TRAVELERID.RideType', default="Ride", read_only=True)
+    StartingTime = serializers.TimeField(source='TRAVELERID.StartingTime', default="00:00:00", read_only=True)
+    EndingTime = serializers.TimeField(source='TRAVELERID.EndingTime', default="00:00:00", read_only=True)
+    StartLocation = serializers.CharField(source='TRAVELERID.StartLocation', default="", read_only=True)
+    EndLocation = serializers.CharField(source='TRAVELERID.EndLocation', default="", read_only=True)
+    Kms = serializers.FloatField(source='TRAVELERID.Kms', default=0.0, read_only=True)
+    VehicleType = serializers.CharField(source='TRAVELERID.VehicleType', default="Sedan", read_only=True)
+    
+    # Path: Booking -> Route -> Traveler User -> Name
+    Name = serializers.CharField(source='TRAVELERID.TRAVELERID.Name', default="Eco Traveler", read_only=True)
+    PhoneNo = serializers.CharField(source='TRAVELERID.TRAVELERID.PhoneNo', default="", read_only=True)
+    BagSize = serializers.CharField(source='TRAVELERID.BagSize', default="Standard", read_only=True)
+
+    class Meta:
+        model = BookingTable
+        fields = [
+            'id', 'PickupLocation', 'DropLocation', 'BookingStatus', 'Amount', 
+            'BookingDate', 'OtpCode', 'RideAvailability', 'SpaceAvailability', 
+            'RideType', 'StartingTime', 'EndingTime', 'StartLocation', 'EndLocation', 
+            'Name', 'PhoneNo', 'Kms', 'VehicleType', 'BagSize', 'PaymentStatus'
+        ]
 
 
 # class BookingSerializer(serializers.ModelSerializer):
