@@ -145,19 +145,51 @@ class UserSerializer(serializers.ModelSerializer):
 #         ]
 
 
-class BookingSerializer(serializers.ModelSerializer):
-    Name = serializers.CharField(source='USERID.Name', default="Requester")
-    PhoneNo = serializers.CharField(source='USERID.PhoneNo', default="")
-    StartingTime = serializers.TimeField(source='TRAVELERID.StartingTime', read_only=True)
-    Amount = serializers.FloatField(source='TRAVELERID.Amount', default=0.0)
-    spaceavailability = serializers.CharField(source='TRAVELERID.SpaceAvailability', default="N/A")
-    RideType = serializers.CharField(source='TRAVELERID.RideType', default="Ride")
+# class BookingSerializer(serializers.ModelSerializer):
+#     Name = serializers.CharField(source='USERID.Name', default="Requester")
+#     PhoneNo = serializers.CharField(source='USERID.PhoneNo', default="")
+#     StartingTime = serializers.TimeField(source='TRAVELERID.StartingTime', read_only=True)
+#     Amount = serializers.FloatField(source='TRAVELERID.Amount', default=0.0)
+#     spaceavailability = serializers.CharField(source='TRAVELERID.SpaceAvailability', default="N/A")
+#     RideType = serializers.CharField(source='TRAVELERID.RideType', default="Ride")
     
-    # Absolute URLs for Cloudinary
+#     # Absolute URLs for Cloudinary
+#     ParcelImage = serializers.SerializerMethodField()
+#     PaymentProof = serializers.SerializerMethodField()
+    
+#     # Ensure PaymentStatus can be read correctly
+#     PaymentStatus = serializers.CharField(default="Pending") 
+#     UTR = serializers.CharField(required=False, allow_null=True) 
+
+#     class Meta:
+#         model = BookingTable
+#         fields = [
+#             'id', 'PickupLocation', 'DropLocation', 'RideType', 
+#             'TRAVELERID', 'PhoneNo', 'Name', 'StartingTime', 
+#             'Amount', 'spaceavailability', 'BookingStatus', 
+#             'ParcelImage', 'PaymentProof', 'PaymentStatus', 'UTR'
+#         ]
+
+#     def get_ParcelImage(self, obj):
+#         return obj.ParcelImage.url if obj.ParcelImage else None
+
+#     def get_PaymentProof(self, obj):
+#         return obj.PaymentProof.url if obj.PaymentProof else None
+
+class BookingSerializer(serializers.ModelSerializer):
+    # Dot walking: Accesses UserTable via USERID
+    Name = serializers.CharField(source='USERID.Name', default="Requester", read_only=True)
+    PhoneNo = serializers.CharField(source='USERID.PhoneNo', default="", read_only=True)
+    
+    # Dot walking: Accesses TravelRouteTable via TRAVELERID
+    StartingTime = serializers.TimeField(source='TRAVELERID.StartingTime', read_only=True, allow_null=True)
+    Amount = serializers.FloatField(source='TRAVELERID.Amount', default=0.0, read_only=True)
+    spaceavailability = serializers.CharField(source='TRAVELERID.SpaceAvailability', default="N/A", read_only=True)
+    RideType = serializers.CharField(source='TRAVELERID.RideType', default="Ride", read_only=True)
+    
     ParcelImage = serializers.SerializerMethodField()
     PaymentProof = serializers.SerializerMethodField()
     
-    # Ensure PaymentStatus can be read correctly
     PaymentStatus = serializers.CharField(default="Pending") 
     UTR = serializers.CharField(required=False, allow_null=True) 
 
@@ -170,13 +202,23 @@ class BookingSerializer(serializers.ModelSerializer):
             'ParcelImage', 'PaymentProof', 'PaymentStatus', 'UTR'
         ]
 
+    # SAFE CLOUDINARY URL ACCESS
     def get_ParcelImage(self, obj):
-        return obj.ParcelImage.url if obj.ParcelImage else None
+        try:
+            # Check if the file exists and has an attribute 'url'
+            if obj.ParcelImage and hasattr(obj.ParcelImage, 'url'):
+                return obj.ParcelImage.url
+        except Exception:
+            pass
+        return None
 
     def get_PaymentProof(self, obj):
-        return obj.PaymentProof.url if obj.PaymentProof else None
-
-
+        try:
+            if obj.PaymentProof and hasattr(obj.PaymentProof, 'url'):
+                return obj.PaymentProof.url
+        except Exception:
+            pass
+        return None
 
 class ComplaintsSerializer(serializers.ModelSerializer):
     class Meta:
