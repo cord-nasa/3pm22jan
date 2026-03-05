@@ -198,10 +198,13 @@ class PaymentSerializer(serializers.ModelSerializer):
         model = PaymentTable
         fields = ['USERID', 'BOOKINGID', 'TransactionType', 'Amount', 'TransactionDate']
 
+
 class TravelRouteSerializer(serializers.ModelSerializer):
-    drivername = serializers.CharField(source='TRAVELERID.Name')
-    driverphone = serializers.CharField(source='TRAVELERID.PhoneNo')
+    drivername = serializers.CharField(source='TRAVELERID.Name', read_only=True)
+    driverphone = serializers.CharField(source='TRAVELERID.PhoneNo', read_only=True)
     traveler_login_id = serializers.IntegerField(source='TRAVELERID.LOGIN.id', read_only=True)
+    
+    # These must be MethodFields because the photos are in the UserTable, not TravelRouteTable
     ProfilePhoto = serializers.SerializerMethodField()
     AverageRating = serializers.SerializerMethodField()
     ReviewCount = serializers.SerializerMethodField()
@@ -211,27 +214,69 @@ class TravelRouteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_ProfilePhoto(self, obj):
-        if obj.ProfilePhoto:
-            return obj.ProfilePhoto.url  # Returns the full HTTPS Cloudinary link
-        return None
-    
-    def get_IdProof(self, obj):
-        if obj.IdProof:
-            return obj.IdProof.url
+        # Access the photo via the TRAVELERID relation safely
+        try:
+            if obj.TRAVELERID and obj.TRAVELERID.ProfilePhoto:
+                return obj.TRAVELERID.ProfilePhoto.url
+        except Exception:
+            pass
         return None
     
     def get_AverageRating(self, obj):
-        # Calculate avg rating across all bookings for this traveler
-        avg = FeedbackTable.objects.filter(
-            BOOKINGID__TRAVELERID__TRAVELERID=obj.TRAVELERID
-        ).aggregate(Avg('Rating'))['Rating__avg']
-        return round(avg, 1) if avg else 0.0
+        try:
+            # Aggregate ratings for the specific traveler
+            avg = FeedbackTable.objects.filter(
+                BOOKINGID__TRAVELERID__TRAVELERID=obj.TRAVELERID
+            ).aggregate(Avg('Rating'))['Rating__avg']
+            return round(avg, 1) if avg else 0.0
+        except Exception:
+            return 0.0
 
     def get_ReviewCount(self, obj):
-        # Count total reviews for this traveler
-        return FeedbackTable.objects.filter(
-            BOOKINGID__TRAVELERID__TRAVELERID=obj.TRAVELERID
-        ).count() 
+        try:
+            return FeedbackTable.objects.filter(
+                BOOKINGID__TRAVELERID__TRAVELERID=obj.TRAVELERID
+            ).count()
+        except Exception:
+            return 0
+
+
+
+
+# class TravelRouteSerializer(serializers.ModelSerializer):
+#     drivername = serializers.CharField(source='TRAVELERID.Name')
+#     driverphone = serializers.CharField(source='TRAVELERID.PhoneNo')
+#     traveler_login_id = serializers.IntegerField(source='TRAVELERID.LOGIN.id', read_only=True)
+#     ProfilePhoto = serializers.SerializerMethodField()
+#     AverageRating = serializers.SerializerMethodField()
+#     ReviewCount = serializers.SerializerMethodField()
+
+#     class Meta:
+#         model = TravelRouteTable
+#         fields = '__all__'
+
+#     def get_ProfilePhoto(self, obj):
+#         if obj.ProfilePhoto:
+#             return obj.ProfilePhoto.url  # Returns the full HTTPS Cloudinary link
+#         return None
+    
+#     def get_IdProof(self, obj):
+#         if obj.IdProof:
+#             return obj.IdProof.url
+#         return None
+    
+#     def get_AverageRating(self, obj):
+#         # Calculate avg rating across all bookings for this traveler
+#         avg = FeedbackTable.objects.filter(
+#             BOOKINGID__TRAVELERID__TRAVELERID=obj.TRAVELERID
+#         ).aggregate(Avg('Rating'))['Rating__avg']
+#         return round(avg, 1) if avg else 0.0
+
+#     def get_ReviewCount(self, obj):
+#         # Count total reviews for this traveler
+#         return FeedbackTable.objects.filter(
+#             BOOKINGID__TRAVELERID__TRAVELERID=obj.TRAVELERID
+#         ).count() 
 
 class AddTravelRouteSerializer(serializers.ModelSerializer):
     
