@@ -188,7 +188,7 @@ class FeedbackTable(models.Model):
 
 class PaymentTable(models.Model):
     BOOKINGID = models.ForeignKey(BookingTable, on_delete=models.CASCADE, null=True, blank=True)
-    TransactionType = models.CharField(max_length=10, null=True, blank=True)
+    TransactionType = models.CharField(max_length=100, null=True, blank=True)
     Amount = models.FloatField(null=True, blank=True)
     TransactionDate = models.DateField(auto_now_add=True)
 

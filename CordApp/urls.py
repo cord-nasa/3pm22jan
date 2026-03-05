@@ -59,4 +59,9 @@ urlpatterns = [
     path('CreatePaymentIntent',CreatePaymentIntent.as_view(),name='CreatePaymentIntent'),
     path('addtipapi',UpdateGratitudeAPI.as_view(),name='AddTipApi'),
     path('ApprovePaymentAPI', ApprovePaymentAPI.as_view(), name='ApprovePaymentAPI'), 
+    # New OTP endpoints
+    path('api/send-otp/', SendOTPAPI.as_view(), name='send_otp'),
+    path('api/verify-otp/', VerifyOTPAPI.as_view(), name='verify_otp'),
+    path('api/resend-otp/', ResendOTPAPI.as_view(), name='resend_otp'),
+
 ]
