@@ -1,0 +1,152 @@
+Program 1 
+Aim: Create a php program to display the biodata of a person by reading the personal details 
+using an HTML page. 
+Code: 
+<!DOCTYPE html> 
+<html> 
+<head> 
+<title>Biodata</title> 
+</head> 
+<body> 
+<form method="post"> 
+<table border="1" cellpadding="5" cellspacing="0"> 
+<tr> 
+<td>Name</td> 
+<td><input type="text" name="name"></td> 
+</tr> 
+<tr> 
+<td>Address</td> 
+<td><textarea rows="3" name="address"></textarea></td> 
+</tr> 
+<tr> 
+<td>Age</td> 
+<td><input type="text" name="age"></td> 
+</tr> 
+<tr> 
+<td>Phone</td> 
+<td><input type="text" name="phone"></td> 
+</tr> 
+<tr> 
+<td>Email</td> 
+<td><input type="email" name="email"></td> 
+</tr> 
+<tr> 
+<td colspan="2" align="center"> 
+<input type="submit" value="Submit"> 
+</td> 
+</tr> 
+</table> 
+</form> 
+<?php 
+if ($_SERVER["REQUEST_METHOD"] == "POST") { 
+$name    = $_POST['name']; 
+$address = $_POST['address']; 
+$age     = $_POST['age']; 
+$phone   = $_POST['phone']; 
+$email   = $_POST['email']; 
+if (empty($name) || empty($address) || empty($age) || empty($phone) || empty($email)) { 
+echo "<p style='color:red;'>Please enter all details.</p>"; 
+} elseif (!is_numeric($phone) || strlen($phone) != 10) { 
+echo "<p style='color:red;'>Please enter a valid 10-digit mobile number.</p>"; 
+} else { 
+echo "<h3>Biodata</h3>"; 
+echo "<table border='1' cellpadding='5' cellspacing='0'>"; 
+echo "<tr><td>Name</td><td>$name</td></tr>"; 
+echo "<tr><td>Address</td><td>$address</td></tr>"; 
+echo "<tr><td>Age</td><td>$age</td></tr>"; 
+echo "<tr><td>Phone</td><td>$phone</td></tr>"; 
+echo "<tr><td>Email</td><td>$email</td></tr>"; 
+echo "</table>"; 
+} 
+} 
+?> <!DOCTYPE html> 
+<html> 
+<head> 
+<title>Payslip Page</title> 
+</head> 
+<body> 
+<h2>Enter Employee Details</h2> 
+<form method="POST"> 
+<table> 
+<tr> 
+<td>Name</td> 
+<td><input type="text" name="name" required></td> 
+</tr> 
+<tr> 
+<td>Basic Salary</td> 
+<td><input type="number" name="salary" required></td> 
+</tr> 
+<tr> 
+<td>Designation</td> 
+<td> 
+<select name="desig"> 
+<option value="manager">Manager</option> 
+<option value="supervisor">Supervisor</option> 
+<option value="clerk">Clerk</option> 
+<option value="peon">Peon</option> 
+</select> 
+</td> 
+</tr> 
+<tr> 
+<td colspan="2"><input type="submit" name="submit" value="Generate 
+Payslip"></td> 
+</tr> 
+</table> 
+</form> 
+<?php 
+if (isset($_POST['submit'])) { 
+$name = $_POST['name']; 
+$bsalary = $_POST['salary']; 
+$desig = $_POST['desig']; 
+// HRA = 25% of basic 
+$hra = ($bsalary * 25) / 100; 
+// Default allowances 
+$conveyance = 0; 
+$extra = 0; 
+// Allowances based on designation 
+if ($desig == "manager") { 
+$conveyance = 1000; 
+$extra = 500; 
+} elseif ($desig == "supervisor") { 
+$conveyance = 750; 
+$extra = 200; 
+} elseif ($desig == "clerk") { 
+$conveyance = 500; 
+$extra = 100; 
+} elseif ($desig == "peon") { 
+$conveyance = 200; 
+$extra = 0; 
+} 
+// Gross Salary 
+$gross = $bsalary + $hra + $conveyance + $extra; 
+// Income tax 
+$incometax = 0; 
+if ($gross <= 2000) { 
+$incometax = 0; 
+} elseif ($gross > 2000 && $gross <= 4000) { 
+$incometax = ($gross * 3) / 100; 
+} elseif ($gross > 4000 && $gross <= 5000) { 
+$incometax = ($gross * 5) / 100; 
+} elseif ($gross > 5000) { 
+$incometax = ($gross * 8) / 100; 
+} 
+// Net Salary 
+$net = $gross - $incometax; 
+// Display Payslip 
+echo "<h2>Payslip</h2>"; 
+echo "-------------------------<br>"; 
+echo "Name: $name <br>"; 
+echo "Designation: $desig <br>"; 
+echo "Basic Salary: $bsalary <br>"; 
+echo "HRA: $hra <br>"; 
+echo "Conveyance: $conveyance <br>"; 
+echo "Extra Allowance: $extra <br>"; 
+echo "Gross Salary: $gross <br>"; 
+echo "Income Tax: $incometax <br>"; 
+echo "Net Salary: $net <br>"; 
+echo "-------------------------<br>"; 
+} 
+?> 
+</body> 
+</html></body> 
+</html> 

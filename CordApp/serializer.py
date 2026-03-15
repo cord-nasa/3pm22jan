@@ -355,3 +355,16 @@ class TipSerializer(serializers.ModelSerializer):
         model = TipTable
         fields = "__all__"
 
+
+class NotificationSerializer(serializers.ModelSerializer):
+    # This format is easy for Flutter to parse
+    time_ago = serializers.SerializerMethodField()
+
+    class Meta:
+        model = NotificationTable
+        fields = ['id', 'Message', 'IsRead', 'CreatedAt', 'time_ago']
+
+    def get_time_ago(self, obj):
+        # Optional: Returns a human-readable time format
+        from django.utils.timesince import timesince
+        return timesince(obj.CreatedAt) + " ago"

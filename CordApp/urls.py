@@ -52,6 +52,10 @@ urlpatterns = [
     path('AddTravelRouteAPI/<int:id>',AddTravelRouteAPI.as_view(),name='AddTravelRouteAPI'), 
     path('chat/send/', SendChatAPI.as_view()),
     path('chat/view/<int:sender_id>/<int:receiver_id>/', ViewChatAPI.as_view()),
+   
+   # Notification API path
+    path('ViewNotificationsAPI/<int:lid>', ViewNotificationsAPI.as_view(), name='ViewNotificationsAPI'),
+   
     path('ViewTraveller',ViewTraveller.as_view(),name='ViewTraveller'),
     path('ViewUser',ViewUser.as_view(),name='ViewUser'),
     path('VerifyOtp/<int:lid>',VerifyOtp.as_view(),name='VerifyOtp'),

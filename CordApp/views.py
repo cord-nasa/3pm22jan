@@ -1814,3 +1814,32 @@ class ApprovePaymentAPI(APIView):
             # This logs the specific error (like the character limit one) to Render
             print(f"CRITICAL ERROR in ApprovePaymentAPI: {str(e)}") 
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+# ==========================================
+#           NOTIFICATION API
+# ==========================================
+
+class ViewNotificationsAPI(APIView):
+    """
+    Fetch all notifications for a specific user.
+    lid: The login_id of the user.
+    """
+    def get(self, request, lid):
+        print(f"######### Fetching Notifications for lid: {lid} #########")
+        try:
+            # 1. Fetch notifications for this user, ordered by newest first
+            notifications = NotificationTable.objects.filter(
+                USERID__LOGIN_id=lid
+            ).order_by('-CreatedAt')
+            
+            # 2. Use the serializer to format the data
+            serializer = NotificationSerializer(notifications, many=True)
+            
+            # 3. Mark these as read (Optional: could be done via a separate POST API)
+            # notifications.update(IsRead=True) 
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            logger.error(f"Error fetching notifications: {str(e)}")
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)        

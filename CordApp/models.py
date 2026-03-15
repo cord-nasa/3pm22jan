@@ -208,3 +208,14 @@ class SettlementTable(models.Model):
     Amount = models.FloatField()
     UTR = models.CharField(max_length=100)
     Date = models.DateTimeField(auto_now_add=True)
+    # Add this field:
+    SettlementProof = models.FileField(upload_to='settlements/', null=True, blank=True)
+
+class NotificationTable(models.Model):
+    USERID = models.ForeignKey(UserTable, on_delete=models.CASCADE)
+    Message = models.CharField(max_length=500)
+    IsRead = models.BooleanField(default=False)
+    CreatedAt = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.USERID.Name} - {self.Message[:20]}"
